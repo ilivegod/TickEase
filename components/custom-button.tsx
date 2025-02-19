@@ -11,7 +11,7 @@ import {
 
 interface CustomButtonProps extends TouchableOpacityProps {
   onPress: () => void;
-  title: string;
+  title: any;
   IconLeft?: React.ComponentType<any>;
   IconRight?: React.ComponentType<any>;
   style?: ViewStyle;

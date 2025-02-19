@@ -80,7 +80,6 @@ const styles = StyleSheet.create({
   },
   desc: {
     fontSize: 16,
-    lineHeight: 24,
     color: "rgb(107 114 128)",
     fontWeight: "thin",
   },

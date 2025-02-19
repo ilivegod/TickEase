@@ -1,13 +1,15 @@
 import {
   Animated,
   Image,
+  Modal,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { router } from "expo-router";
 import { ThemedView } from "../../components/ThemedView";
 import { ThemedText } from "../../components/ThemedText";
@@ -15,18 +17,9 @@ import { Ticket } from "lucide-react-native";
 import { useThemeColor } from "../../hooks/useThemeColor";
 import { lightBgColor } from "../../constants/Colors";
 import CustomButton from "../../components/custom-button";
+import { Checkbox } from "react-native-paper";
 
 const Welcome = () => {
-  // Animation for the loading dot
-
-  const handleTermsPress = () => {
-    console.log("handleTermsPress");
-  };
-
-  const handlePrivacyPress = () => {
-    console.log("handleTermsPress");
-  };
-
   const iconColor = useThemeColor(
     { light: "#012642", dark: "#f3f4f6" },
     "background"
@@ -64,17 +57,12 @@ const Welcome = () => {
           />
 
           <View style={styles.termsContainer}>
-            <View style={styles.checkbox} />
-            <ThemedText style={styles.termsText}>
-              I agree to the{" "}
-              <Text style={styles.link} onPress={handleTermsPress}>
-                Terms of Use
-              </Text>{" "}
-              and acknowledge I have read the{" "}
-              <Text style={styles.link} onPress={handlePrivacyPress}>
-                Privacy Policy
-              </Text>
-            </ThemedText>
+            <View style={styles.checkboxContainer}>
+              <ThemedText style={styles.messageText}>
+                Don't want to create an account? You can still access the app as
+                a guest!
+              </ThemedText>
+            </View>
           </View>
           <View style={{ marginBottom: 15 }}>
             <CustomButton
@@ -95,7 +83,6 @@ export default Welcome;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     marginTop: "15%",
     marginBottom: "10%",
   },
@@ -137,24 +124,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
   },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   termsContainer: {
     flexDirection: "row",
     alignItems: "flex-start",
     marginTop: 20,
     marginBottom: 30,
   },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderRadius: 4,
-    borderWidth: 2,
-    borderColor: "#0084FF",
-    marginRight: 10,
-    marginTop: 2,
-  },
-  termsText: {
+  messageText: {
     flex: 1,
     lineHeight: 22,
+    paddingHorizontal: 10,
+    fontSize: 16,
   },
   link: {
     color: "#0084FF",
@@ -171,24 +155,41 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "500",
   },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    maxHeight: "80%",
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 15,
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  closeButton: {
+    backgroundColor: "#2196F3",
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginTop: 15,
+  },
+  closeButtonText: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
 });
-
-{
-  /* <TouchableOpacity style={styles.button}>
-<View
-  style={{
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 10,
-  }}
->
-  <Image
-    source={google}
-    resizeMode="contain"
-    style={{ width: 20, height: 20, marginHorizontal: 2 }}
-  />
-  <Text style={styles.buttonText}>Continue with Google</Text>
-</View>
-</TouchableOpacity> */
-}

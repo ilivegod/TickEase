@@ -33,7 +33,7 @@ export const slate900 = "#0f172a";
    
 
 export const lightBgColor = Color("#f5f5f5").string();
-export const darkBgColor = Color("#001a2e").string();
+export const darkBgColor = Color("#0a0a0a").string();
 
 export const lightCardColor = Color("#fff").string();
 export const darkCardColor = Color("#012642").string();
