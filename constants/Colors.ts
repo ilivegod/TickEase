@@ -4,6 +4,7 @@
  */
 import Color from "color";
 
+
 const tintColorLight = '#0a7ea4';
 const tintColorDark = '#fff';
 
@@ -46,4 +47,5 @@ export const darkBgColor = Color("#0a0a0a").string();
 
 export const lightCardColor = Color("#fff").string();
 export const darkCardColor = Color("#012642").string();
+
 

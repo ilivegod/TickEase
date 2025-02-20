@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   StatusBar,
   Dimensions,
+  useColorScheme,
 } from "react-native";
 import { router } from "expo-router";
 import { Feather } from "@expo/vector-icons";
@@ -19,6 +20,7 @@ import { useThemeColor } from "../../hooks/useThemeColor";
 import {
   gray100,
   gray200,
+  lightBgColor,
   neutral800,
   neutral900,
   neutral950,
@@ -121,6 +123,7 @@ const categories = [
 ];
 
 export default function EventsScreen() {
+  const colorScheme = useColorScheme();
   const insets = useSafeAreaInsets();
   const [selectedCategory, setSelectedCategory] = useState("All Events");
 
@@ -248,42 +251,41 @@ export default function EventsScreen() {
       {/* Events List */}
       <View
         style={{
-          padding: 16,
           borderTopLeftRadius: 25,
           borderTopRightRadius: 25,
           backgroundColor: "white",
+          paddingTop: 16,
+          paddingLeft: 16,
         }}
       >
-        <ThemedText
-          style={{ fontSize: 15, fontWeight: "500", marginBottom: 10 }}
-        >
+        <ThemedText style={{ fontSize: 15, fontWeight: "500" }}>
           Discover Nearby Events
         </ThemedText>
-        <ScrollView
-          contentContainerStyle={styles.eventsList}
-          showsVerticalScrollIndicator={false}
-        >
-          <EventCard
-            date="25"
-            location="Golden Gate"
-            subLocation="Arts and Culture"
-            organizer="Viewer Arts Group"
-            title="Spring Art Exhibition"
-            attendees={4}
-            backgroundColor="#10B981"
-          />
-          <EventCard
-            date="24"
-            location="San Francisco"
-            subLocation="Golden Gate Pavilion"
-            organizer="Rock Waves Production"
-            title="Summer Music Festival"
-            attendees={8}
-            backgroundColor="#4F46E5"
-          />
-          {events.map(renderEventCard)}
-        </ScrollView>
       </View>
+      <ScrollView
+        contentContainerStyle={styles.eventsList}
+        showsVerticalScrollIndicator={false}
+      >
+        <EventCard
+          date="25"
+          location="Golden Gate"
+          subLocation="Arts and Culture"
+          organizer="Viewer Arts Group"
+          title="Spring Art Exhibition"
+          attendees={4}
+          backgroundColor="#10B981"
+        />
+        <EventCard
+          date="24"
+          location="San Francisco"
+          subLocation="Golden Gate Pavilion"
+          organizer="Rock Waves Production"
+          title="Summer Music Festival"
+          attendees={8}
+          backgroundColor="#4F46E5"
+        />
+        {events.map(renderEventCard)}
+      </ScrollView>
     </ThemedView>
   );
 }
@@ -352,6 +354,8 @@ const styles = StyleSheet.create({
   },
   eventsList: {
     gap: 16,
+    padding: 16,
+    backgroundColor: "white",
   },
   eventCard: {
     backgroundColor: "#FFFFFF",
