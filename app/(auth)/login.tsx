@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -8,6 +8,8 @@ import {
   ActivityIndicator,
   SafeAreaView,
   ScrollView,
+  Image,
+  KeyboardAvoidingView,
 } from "react-native";
 import { useMutation } from "@tanstack/react-query";
 import { useForm, Controller } from "react-hook-form";
@@ -15,19 +17,26 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import CustomButton from "../../components/custom-button";
 import { ThemedText } from "../../components/ThemedText";
+import { ThemedView } from "../../components/ThemedView";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useThemeColor } from "../../hooks/useThemeColor";
+import {
+  gray100,
+  gray200,
+  neutral800,
+  neutral900,
+} from "../../constants/Colors";
+import { Link } from "expo-router";
 
 // Form validation schema
-const signUpSchema = z
-  .object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
-    email: z.string().email("Invalid email address"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
+const signUpSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+});
+
+const verifySchema = z.object({
+  code: z.string().email("Invalid email address"),
+});
 
 type SignUpForm = z.infer<typeof signUpSchema>;
 
@@ -39,6 +48,35 @@ const signUp = async (data: SignUpForm) => {
 };
 
 export default function SignUpScreen() {
+  const [code, setCode] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const insets = useSafeAreaInsets();
+  const buttonBg = useThemeColor(
+    { light: neutral900, dark: gray100 },
+    "background"
+  );
+
+  const inputBg = useThemeColor(
+    { light: gray200, dark: neutral800 },
+    "background"
+  );
+
+  const buttonTextColor = useThemeColor(
+    { light: gray100, dark: neutral900 },
+    "background"
+  );
+
+  const socialButtonTextColor = useThemeColor(
+    { light: neutral900, dark: gray100 },
+    "background"
+  );
+
+  const socialButtonBorderColor = useThemeColor(
+    { light: neutral800, dark: gray200 },
+    "background"
+  );
+
   const {
     control,
     handleSubmit,
@@ -46,10 +84,8 @@ export default function SignUpScreen() {
   } = useForm<SignUpForm>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
-      name: "",
       email: "",
       password: "",
-      confirmPassword: "",
     },
   });
 
@@ -66,157 +102,206 @@ export default function SignUpScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Create Account</Text>
-          <Text style={styles.subtitle}>Sign up to get started</Text>
-        </View>
-
-        <View style={styles.form}>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Name</Text>
-            <Controller
-              control={control}
-              name="name"
-              render={({ field: { onChange, value } }) => (
-                <TextInput
-                  style={styles.input}
-                  onChangeText={onChange}
-                  value={value}
-                  placeholder="Enter your name"
-                  placeholderTextColor="#A0AEC0"
-                />
-              )}
-            />
-            {errors.name && (
-              <Text style={styles.errorText}>{errors.name.message}</Text>
-            )}
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Email</Text>
-            <Controller
-              control={control}
-              name="email"
-              render={({ field: { onChange, value } }) => (
-                <TextInput
-                  style={styles.input}
-                  onChangeText={onChange}
-                  value={value}
-                  placeholder="Enter your email"
-                  placeholderTextColor="#A0AEC0"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                />
-              )}
-            />
-            {errors.email && (
-              <Text style={styles.errorText}>{errors.email.message}</Text>
-            )}
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Password</Text>
-            <Controller
-              control={control}
-              name="password"
-              render={({ field: { onChange, value } }) => (
-                <TextInput
-                  style={styles.input}
-                  onChangeText={onChange}
-                  value={value}
-                  placeholder="Enter your password"
-                  placeholderTextColor="#A0AEC0"
-                  secureTextEntry
-                />
-              )}
-            />
-            {errors.password && (
-              <Text style={styles.errorText}>{errors.password.message}</Text>
-            )}
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Confirm Password</Text>
-            <Controller
-              control={control}
-              name="confirmPassword"
-              render={({ field: { onChange, value } }) => (
-                <TextInput
-                  style={styles.input}
-                  onChangeText={onChange}
-                  value={value}
-                  placeholder="Confirm your password"
-                  placeholderTextColor="#A0AEC0"
-                  secureTextEntry
-                />
-              )}
-            />
-            {errors.confirmPassword && (
-              <Text style={styles.errorText}>
-                {errors.confirmPassword.message}
-              </Text>
-            )}
-          </View>
-
-          <CustomButton
-            title={
-              mutation.isPending ? (
-                <ActivityIndicator color="white" />
-              ) : (
-                <Text style={styles.buttonText}>Sign Up</Text>
-              )
-            }
-            onPress={handleSubmit(onSubmit)}
-            disabled={mutation.isPending}
-            style={styles.button}
-            textStyle={styles.buttonText}
-          />
-
-          <View style={styles.divider}>
-            <View style={styles.dividerLine} />
-            <ThemedText type="desc" style={styles.dividerText}>
-              or continue with
+        <ThemedView style={{ flex: 1, padding: 20 }}>
+          <View
+            style={[
+              styles.header,
+              {
+                paddingTop: insets.top,
+              },
+            ]}
+          >
+            <ThemedText style={styles.title}>
+              Log in to your account✨
             </ThemedText>
-            <View style={styles.dividerLine} />
+            <ThemedText style={styles.subtitle}>
+              Welcome back! Please enter your details
+            </ThemedText>
           </View>
 
-          <View style={styles.socialButtons}>
-            <TouchableOpacity style={styles.socialButton}>
-              <Text style={styles.socialButtonText}>Google</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.socialButton}>
-              <Text style={styles.socialButtonText}>Apple</Text>
-            </TouchableOpacity>
+          <View style={styles.form}>
+            <View style={styles.inputContainer}>
+              <ThemedText type="desc" style={styles.label}>
+                Email
+              </ThemedText>
+              <Controller
+                control={control}
+                name="email"
+                render={({ field: { onChange, value } }) => (
+                  <TextInput
+                    style={[
+                      styles.input,
+                      {
+                        backgroundColor: inputBg,
+                      },
+                    ]}
+                    onChangeText={onChange}
+                    value={value}
+                    placeholder="Enter your email"
+                    placeholderTextColor="#A0AEC0"
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                  />
+                )}
+              />
+              {errors.email && (
+                <Text style={styles.errorText}>{errors.email.message}</Text>
+              )}
+            </View>
+
+            <View style={styles.inputContainer}>
+              <ThemedText type="desc" style={styles.label}>
+                Password
+              </ThemedText>
+              <Controller
+                control={control}
+                name="password"
+                render={({ field: { onChange, value } }) => (
+                  <TextInput
+                    style={[
+                      styles.input,
+                      {
+                        backgroundColor: inputBg,
+                      },
+                    ]}
+                    onChangeText={onChange}
+                    value={value}
+                    placeholder="Enter your password"
+                    placeholderTextColor="#A0AEC0"
+                    secureTextEntry
+                  />
+                )}
+              />
+              {errors.password && (
+                <Text style={styles.errorText}>{errors.password.message}</Text>
+              )}
+            </View>
+            <View style={{ alignSelf: "flex-end" }}>
+              <Link href={"(auth)/forgot-password"}>
+                <ThemedText style={{ fontSize: 16, fontWeight: "700" }}>
+                  Forgot password
+                </ThemedText>
+              </Link>
+            </View>
+
+            <View
+              style={{
+                top: "20%",
+                gap: 25,
+              }}
+            >
+              <CustomButton
+                title={
+                  mutation.isPending ? (
+                    <ActivityIndicator color="white" />
+                  ) : (
+                    <Text style={styles.buttonText}>Log in</Text>
+                  )
+                }
+                onPress={handleSubmit(onSubmit)}
+                disabled={mutation.isPending}
+                style={[
+                  styles.button,
+                  {
+                    backgroundColor: buttonBg,
+                  },
+                ]}
+                textStyle={[
+                  styles.buttonText,
+                  {
+                    color: buttonTextColor,
+                  },
+                ]}
+              />
+
+              <View style={styles.socialButtons}>
+                <TouchableOpacity
+                  style={[
+                    styles.socialButton,
+                    {
+                      borderColor: socialButtonBorderColor,
+                    },
+                  ]}
+                >
+                  <Image
+                    source={require("../../assets/icons/google.png")}
+                    style={{ width: 20, height: 20 }}
+                  />
+                  <Text
+                    style={[
+                      styles.socialButtonText,
+                      {
+                        color: socialButtonTextColor,
+                      },
+                    ]}
+                  >
+                    Log in with Google
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
-        </View>
+          <View
+            style={{
+              flexDirection: "row",
+              gap: 5,
+              position: "absolute",
+              bottom: insets.bottom + 35,
+              alignSelf: "center",
+            }}
+          >
+            <ThemedText type="desc" style={{ fontSize: 16 }}>
+              Don't have an account?
+            </ThemedText>
+            <Link href={"(auth)/sign-up"}>
+              <ThemedText style={{ fontSize: 16, fontWeight: "700" }}>
+                Sign up
+              </ThemedText>
+            </Link>
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              gap: 5,
+              position: "absolute",
+              bottom: insets.bottom,
+              alignSelf: "center",
+            }}
+          >
+            <ThemedText type="desc" style={{ fontSize: 16 }}>
+              Or continue as a
+            </ThemedText>
+            <Link href={"(auth)/sign-up"}>
+              <ThemedText style={{ fontSize: 16, fontWeight: "700" }}>
+                Guest
+              </ThemedText>
+            </Link>
+          </View>
+        </ThemedView>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
   },
   scrollContent: {
     flexGrow: 1,
-    padding: 20,
   },
   header: {
     marginBottom: 32,
   },
   title: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: "bold",
-    color: "#1A202C",
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: "#718096",
   },
   form: {
     gap: 20,
@@ -231,8 +316,6 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 48,
-    borderWidth: 1,
-    borderColor: "#E2E8F0",
     borderRadius: 8,
     paddingHorizontal: 16,
     fontSize: 16,
@@ -245,14 +328,11 @@ const styles = StyleSheet.create({
   },
   button: {
     height: 48,
-    backgroundColor: "#3182CE",
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 8,
   },
   buttonText: {
-    color: "#fff",
     fontSize: 16,
     fontWeight: "600",
   },
@@ -282,6 +362,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
+    flexDirection: "row",
+    gap: 10,
   },
   socialButtonText: {
     color: "#4A5568",

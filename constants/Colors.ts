@@ -30,6 +30,15 @@ export const Colors = {
 };
 
 export const slate900 = "#0f172a";
+export const gray100 = "#f3f4f6"
+export const gray200 = "#e5e7eb"
+export const neutral900 = "#171717"
+export const neutral950 = "#0a0a0a"
+export const neutral800 = "#262626"
+
+
+
+
    
 
 export const lightBgColor = Color("#f5f5f5").string();
@@ -37,3 +46,4 @@ export const darkBgColor = Color("#0a0a0a").string();
 
 export const lightCardColor = Color("#fff").string();
 export const darkCardColor = Color("#012642").string();
+

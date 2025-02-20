@@ -26,6 +26,7 @@ export default function RootLayout() {
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen name="(app)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
         </Stack>
         <StatusBar style="auto" />
@@ -33,3 +34,25 @@ export default function RootLayout() {
     </QueryClientProvider>
   );
 }
+
+// import { Stack } from 'expo-router';
+// import { useAuth } from '../src/hooks/useAuth';
+
+// export default function RootLayout() {
+//   const { isAuthenticated, isStaff } = useAuth();
+
+//   return (
+//     <Stack screenOptions={{ headerShown: false }}>
+//       {!isAuthenticated ? (
+//         // Auth group
+//         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+//       ) : isStaff ? (
+//         // Staff group
+//         <Stack.Screen name="(staff)" options={{ headerShown: false }} />
+//       ) : (
+//         // Main app group
+//         <Stack.Screen name="(app)" options={{ headerShown: false }} />
+//       )}
+//     </Stack>
+//   );
+// }

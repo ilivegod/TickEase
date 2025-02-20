@@ -14,8 +14,8 @@ interface CustomButtonProps extends TouchableOpacityProps {
   title: any;
   IconLeft?: React.ComponentType<any>;
   IconRight?: React.ComponentType<any>;
-  style?: ViewStyle;
-  textStyle?: TextStyle;
+  style?: any;
+  textStyle?: any;
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
