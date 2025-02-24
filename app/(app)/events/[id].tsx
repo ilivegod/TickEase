@@ -6,31 +6,68 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Share as RNShare,
   Platform,
-  StatusBar,
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { Clock } from "lucide-react-native";
-import { useThemeColor } from "../../../hooks/useThemeColor";
+
+interface PriceTier {
+  id: string;
+  name: string;
+  price: number;
+  å;
+  available: number;
+  description: string;
+}
+
+const priceTiers = [
+  {
+    id: "1",
+    name: "Early Bird",
+    price: 49.99,
+    available: 50,
+    description: "Limited early bird tickets",
+  },
+  {
+    id: "2",
+    name: "Regular",
+    price: 79.99,
+    available: 100,
+    description: "Regular admission ticket",
+  },
+  {
+    id: "3",
+    name: "VIP",
+    price: 149.99,
+    available: 20,
+    description: "VIP access with exclusive benefits",
+  },
+];
 
 export default function EventDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [isBookmarked, setIsBookmarked] = React.useState(false);
   const [showFullDescription, setShowFullDescription] = React.useState(false);
 
-  const iconColor = useThemeColor(
-    { light: "gray", dark: "white" },
-    "background"
-  );
-
   const description =
     "Experience an unforgettable day of music, dance, and art at Groove Beats Day Fest! Celebrate local talent and connect with fellow enthusiasts in a vibrant atmosphere. Join us!!";
 
+  const handleShare = async () => {
+    try {
+      await RNShare.share({
+        message: `Check out Groove Beats Day Fest! ${description}`,
+        url: `https://yourapp.com/event/${id}`,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scrollView}>
+      <ScrollView style={styles.scrollView} bounces={false}>
         <View style={styles.imageContainer}>
           <Image
             source={{
@@ -46,29 +83,29 @@ export default function EventDetailsScreen() {
             >
               <Ionicons name="chevron-back" size={24} color="white" />
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.iconButton}
-              onPress={() => setIsBookmarked(!isBookmarked)}
-            >
-              <Ionicons
-                name={isBookmarked ? "bookmark" : "bookmark-outline"}
-                size={24}
-                color="white"
-              />
-            </TouchableOpacity>
+            <View style={styles.headerButtons}>
+              <TouchableOpacity style={styles.iconButton} onPress={handleShare}>
+                <Ionicons name="share-outline" size={24} color="white" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.iconButton, { marginLeft: 8 }]}
+                onPress={() => setIsBookmarked(!isBookmarked)}
+              >
+                <Ionicons
+                  name={isBookmarked ? "bookmark" : "bookmark-outline"}
+                  size={24}
+                  color="white"
+                />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
 
         <View style={styles.content}>
           <View style={styles.header}>
-            <View>
-              <Text style={styles.title}>Tidal Rave 🏖️</Text>
-              <View
-                style={{ flexDirection: "row", alignItems: "center", gap: 7 }}
-              >
-                <Clock color={iconColor} size={16} />
-                <Text style={styles.time}>5 PM - 12 AM</Text>
-              </View>
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>Groove Beats Day Fest</Text>
+              <Text style={styles.time}>12 PM - 2 PM</Text>
             </View>
             <View style={styles.dateBadge}>
               <Text style={styles.dateNumber}>24</Text>
@@ -76,26 +113,16 @@ export default function EventDetailsScreen() {
             </View>
           </View>
 
-          <View style={styles.statsContainer}>
-            <View style={styles.statItem1}>
-              <Text style={styles.rubricTitle}>Price</Text>
-              <Text style={styles.rubricLabel}>Free</Text>
-            </View>
-            <View style={styles.statItem2}>
-              <Text style={styles.rubricTitle}>Category</Text>
-              <Text style={styles.rubricLabel}>Music</Text>
-            </View>
-            <View style={styles.statItem3}>
-              <Text style={styles.rubricTitle}> Location</Text>
-              <Text style={styles.locationText}>Accra</Text>
-              <Text style={styles.locationSubtext}>
-                St Stadium, Jouers Preto
-              </Text>
+          <View style={styles.locationCard}>
+            <Ionicons name="location" size={24} color="#6C8EFF" />
+            <View style={styles.locationInfo}>
+              <Text style={styles.locationTitle}>St Stadium, Jouers Preto</Text>
+              <Text style={styles.locationSubtext}>San Francisco, CA</Text>
             </View>
           </View>
 
-          <View style={styles.aboutSection}>
-            <Text style={styles.sectionTitle}>About Tidal Rave</Text>
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>About Event</Text>
             <Text style={styles.description}>
               {showFullDescription
                 ? description
@@ -109,6 +136,54 @@ export default function EventDetailsScreen() {
             </Text>
           </View>
 
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Ticket Types</Text>
+            {priceTiers.map((tier) => (
+              <View key={tier.id} style={styles.ticketCard}>
+                <View style={styles.ticketHeader}>
+                  <Text style={styles.ticketName}>{tier.name}</Text>
+                  <Text style={styles.ticketPrice}>${tier.price}</Text>
+                </View>
+                <Text style={styles.ticketDescription}>{tier.description}</Text>
+                <View style={styles.ticketFooter}>
+                  <Text style={styles.ticketAvailability}>
+                    {tier.available} tickets available
+                  </Text>
+                </View>
+              </View>
+            ))}
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Event Details</Text>
+            <View style={styles.detailsCard}>
+              <View style={styles.detailItem}>
+                <Ionicons name="time-outline" size={20} color="#6B7280" />
+                <Text style={styles.detailText}>Doors open at 11:30 AM</Text>
+              </View>
+              <View style={styles.detailItem}>
+                <Ionicons
+                  name="musical-notes-outline"
+                  size={20}
+                  color="#6B7280"
+                />
+                <Text style={styles.detailText}>
+                  Live performances start at 12 PM
+                </Text>
+              </View>
+              <View style={styles.detailItem}>
+                <Ionicons name="camera-outline" size={20} color="#6B7280" />
+                <Text style={styles.detailText}>Photography allowed</Text>
+              </View>
+              <View style={styles.detailItem}>
+                <Ionicons name="fast-food-outline" size={20} color="#6B7280" />
+                <Text style={styles.detailText}>
+                  Food and beverages available
+                </Text>
+              </View>
+            </View>
+          </View>
+
           <View style={styles.organizerSection}>
             <View style={styles.organizerAvatar} />
             <View style={styles.organizerInfo}>
@@ -120,6 +195,26 @@ export default function EventDetailsScreen() {
           </View>
         </View>
       </ScrollView>
+
+      <SafeAreaView edges={["bottom"]} style={styles.bottomContainer}>
+        <View style={styles.priceContainer}>
+          <Text style={styles.priceLabel}>Starting from</Text>
+          <Text style={styles.price}>
+            ${Math.min(...priceTiers.map((t) => t.price))}
+          </Text>
+        </View>
+        <TouchableOpacity
+          style={styles.buyButton}
+          onPress={() =>
+            router.push({
+              pathname: "/checkout",
+              params: { eventId: id },
+            })
+          }
+        >
+          <Text style={styles.buyButtonText}>Buy Tickets</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
     </View>
   );
 }
@@ -150,11 +245,15 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 16,
   },
+  headerButtons: {
+    flexDirection: "row",
+  },
   iconButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "rgba(165, 165, 165, 0.6)",
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+
     alignItems: "center",
     justifyContent: "center",
   },
@@ -166,6 +265,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "flex-start",
     marginBottom: 24,
+  },
+  titleContainer: {
+    flex: 1,
+    marginRight: 16,
   },
   title: {
     fontSize: 24,
@@ -179,99 +282,49 @@ const styles = StyleSheet.create({
   },
   dateBadge: {
     backgroundColor: "#6C8EFF",
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    borderRadius: 25,
     padding: 12,
     alignItems: "center",
-    justifyContent: "center",
+    minWidth: 56,
   },
   dateNumber: {
     color: "#fff",
-    fontSize: 19,
+    fontSize: 20,
     fontWeight: "600",
   },
   dateMonth: {
     color: "#fff",
-    fontSize: 12,
+    fontSize: 14,
   },
-  statsContainer: {
+  locationCard: {
     flexDirection: "row",
-    gap: 12,
+    alignItems: "center",
+    backgroundColor: "#F9FAFB",
+    padding: 16,
+    borderRadius: 12,
     marginBottom: 24,
   },
-  statItem1: {
-    width: "20%",
-    borderRadius: 12,
-    paddingVertical: 12,
-    backgroundColor: "#F9FAFB",
-    justifyContent: "center",
-
-    alignItems: "center",
+  locationInfo: {
+    marginLeft: 12,
   },
-  statItem2: {
-    width: "30%",
-    borderRadius: 12,
-    paddingVertical: 12,
-    backgroundColor: "#F9FAFB",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  statItem3: {
-    flex: 1,
-    backgroundColor: "#F9FAFB",
-    borderRadius: 12,
-    paddingVertical: 12,
-    alignItems: "center",
-  },
-
-  rubricTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#111827",
-    marginBottom: 4,
-  },
-  rubricLabel: {
+  locationTitle: {
     fontSize: 16,
-    color: "#6B7280",
-  },
-  memberAvatars: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 4,
-  },
-  avatarCircle: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: "#E5E7EB",
-    borderWidth: 2,
-    borderColor: "#fff",
-  },
-  memberCount: {
-    marginLeft: 4,
-    fontSize: 14,
     fontWeight: "600",
     color: "#111827",
-  },
-  locationText: {
-    fontSize: 14,
-    color: "#6B7280",
-    marginBottom: 4,
   },
   locationSubtext: {
-    fontSize: 12,
+    fontSize: 14,
     color: "#6B7280",
-    textAlign: "center",
+    marginTop: 2,
   },
-  aboutSection: {
+  section: {
     marginBottom: 24,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
     color: "#111827",
-    marginBottom: 8,
+    marginBottom: 12,
   },
   description: {
     fontSize: 14,
@@ -282,9 +335,62 @@ const styles = StyleSheet.create({
     color: "#6C8EFF",
     fontWeight: "600",
   },
+  ticketCard: {
+    backgroundColor: "#F9FAFB",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+  },
+  ticketHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  ticketName: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#111827",
+  },
+  ticketPrice: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#6C8EFF",
+  },
+  ticketDescription: {
+    fontSize: 14,
+    color: "#6B7280",
+    marginBottom: 8,
+  },
+  ticketFooter: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  ticketAvailability: {
+    fontSize: 12,
+    color: "#059669",
+    fontWeight: "500",
+  },
+  detailsCard: {
+    backgroundColor: "#F9FAFB",
+    borderRadius: 12,
+    padding: 16,
+  },
+  detailItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  detailText: {
+    marginLeft: 12,
+    fontSize: 14,
+    color: "#4B5563",
+  },
   organizerSection: {
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: 100,
   },
   organizerAvatar: {
     width: 40,
@@ -307,18 +413,35 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     backgroundColor: "#fff",
-    paddingHorizontal: 16,
-    paddingTop: 8,
-  },
-  continueButton: {
-    backgroundColor: "#0F172A",
-    paddingVertical: 16,
-    borderRadius: 100,
+    borderTopWidth: 1,
+    borderTopColor: "#E5E7EB",
+    padding: 16,
+    flexDirection: "row",
     alignItems: "center",
   },
-  continueButtonText: {
+  priceContainer: {
+    flex: 1,
+  },
+  priceLabel: {
+    fontSize: 12,
+    color: "#6B7280",
+  },
+  price: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#111827",
+  },
+  buyButton: {
+    backgroundColor: "#0F172A",
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 100,
+    minWidth: 140,
+  },
+  buyButtonText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
+    textAlign: "center",
   },
 });
