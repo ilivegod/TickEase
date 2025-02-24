@@ -33,6 +33,7 @@ export const Colors = {
 export const slate900 = "#0f172a";
 export const gray100 = "#f3f4f6"
 export const gray200 = "#e5e7eb"
+export const gray400 = "#9ca3af"
 export const neutral900 = "#171717"
 export const neutral950 = "#0a0a0a"
 export const neutral800 = "#262626"

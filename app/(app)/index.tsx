@@ -10,6 +10,7 @@ import {
   StatusBar,
   Dimensions,
   useColorScheme,
+  FlatList,
 } from "react-native";
 import { router } from "expo-router";
 import { Feather } from "@expo/vector-icons";
@@ -20,10 +21,12 @@ import { useThemeColor } from "../../hooks/useThemeColor";
 import {
   gray100,
   gray200,
+  gray400,
   lightBgColor,
   neutral800,
   neutral900,
   neutral950,
+  slate900,
 } from "../../constants/Colors";
 
 // Mock data - in real app this would come from an API
@@ -31,88 +34,122 @@ const events = [
   {
     id: "1",
     title: "Summer Music Festival",
-    date: "Aug 15, 2024",
-    location: "Central Park, NY",
-    price: "$49.99",
+    date: "15",
+    month: "Aug",
+    location: "Accra",
+    subLocation: "Garage night club",
+    organizer: "Rock Waves Production",
+
     category: "Music",
-    image: "https://your-image-url.com/1",
   },
   {
     id: "2",
     title: "Tech Conference 2024",
-    date: "Sep 20, 2024",
-    location: "Convention Center",
-    price: "$199",
+    date: "20",
+    month: "Sept",
+
+    location: "Accra",
+    subLocation: "Garage night club",
+    organizer: "Viewer Arts Group",
+
     category: "Technology",
-    image: "https://your-image-url.com/2",
   },
   {
     id: "3",
     title: "Food & Wine Festival",
-    date: "Oct 5, 2024",
-    location: "Downtown Square",
-    price: "$75",
+    date: "5",
+    month: "Oct",
+
+    location: "Accra",
+    subLocation: "Garage night club",
+    organizer: "BET",
     category: "Food",
     image: "https://your-image-url.com/3",
   },
 ];
 
-const EventCard = ({
-  date,
-  location,
-  subLocation,
-  organizer,
-  title,
-  attendees,
-  backgroundColor,
-}: {
-  date: string;
-  location: string;
-  subLocation: string;
-  organizer: string;
-  title: string;
-  attendees: number;
-  backgroundColor: string;
-}) => (
-  <View style={[styles.card, { backgroundColor }]}>
-    <View style={styles.cardHeader}>
-      <View>
-        <Text style={styles.cardLocation}>{location}</Text>
-        <Text style={styles.cardLocation}>{subLocation}</Text>
-      </View>
-      <View style={styles.dateBadge}>
-        <Text style={styles.dateText}>{date}</Text>
-      </View>
-    </View>
-    <View style={styles.cardContent}>
-      <Text style={styles.cardOrganizer}>{organizer}</Text>
-      <Text style={styles.cardTitle}>{title}</Text>
-    </View>
-    <View style={styles.cardFooter}>
-      <View style={styles.avatarGroup}>
-        <View
-          style={[
-            styles.avatar,
-            { marginRight: -10, borderColor: backgroundColor },
-          ]}
-        >
-          <Image
-            source={{ uri: "https://v0.dev/placeholder.svg" }}
-            style={styles.avatarImage}
-          />
-        </View>
-        <View style={[styles.avatar, { borderColor: backgroundColor }]}>
-          <Image
-            source={{ uri: "https://v0.dev/placeholder.svg" }}
-            style={styles.avatarImage}
-          />
-        </View>
-      </View>
-      <Text style={styles.attendeeCount}>+{attendees}</Text>
-    </View>
-  </View>
-);
+const categoryColors: Record<string, string> = {
+  Music: "#10B981",
+  Technology: "#6366f1",
+  Food: "#6366f1",
+  Sports: "#10B981",
+  Art: "#e11d48",
+};
 
+const categoryTextColors: Record<string, string> = {
+  Music: neutral950,
+  Technology: "white",
+  Food: "white",
+  Sports: neutral950,
+  Art: "#e11d48",
+};
+
+// {
+//   id,
+//   date,
+//   month,
+//   location,
+//   subLocation,
+//   organizer,
+//   title,
+//   attendees,
+//   backgroundColor,
+// }: {
+//   id: any;
+//   date: string;
+//   month: string;
+//   location: string;
+//   subLocation: string;
+//   organizer: string;
+//   title: string;
+//   attendees: number;
+//   backgroundColor: string;
+// }
+
+const EventCard = ({ item }: { item: any }) => {
+  const backgroundColor =
+    categoryColors[item.category] || categoryColors["Music"];
+
+  const color =
+    categoryTextColors[item.category] || categoryTextColors["Music"];
+
+  return (
+    <TouchableOpacity
+      key={item.id}
+      style={[styles.card, { backgroundColor }]}
+      onPress={() =>
+        router.push({
+          pathname: "/(app)/events/[id]",
+          params: { id: item.id },
+        })
+      }
+    >
+      <View style={styles.cardHeader}>
+        <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
+          <View style={styles.dateBadge}>
+            <Text style={[styles.dateText]}>{item.date}</Text>
+            <Text style={styles.monthText}>{item.month}</Text>
+          </View>
+          <View>
+            <Text style={[styles.cardLocation, { color }]}>
+              {item.location}
+            </Text>
+            <Text style={[styles.cardLocation, { color }]}>
+              {item.subLocation}
+            </Text>
+          </View>
+        </View>
+        <View>
+          <Text style={{ color, fontWeight: "700" }}>{item.category}</Text>
+        </View>
+      </View>
+      <View style={styles.cardContent}>
+        <Text style={[styles.cardOrganizer, { color }]}>{item.organizer}</Text>
+        <Text style={[styles.cardTitle, { color }]}>{item.title}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+};
 const categories = [
   "All Events",
   "Music",
@@ -141,45 +178,16 @@ export default function EventsScreen() {
     { light: neutral950, dark: "white" },
     "background"
   );
+  const [refreshing, setRefreshing] = useState(false);
+  const [data, setData] = useState(events);
 
-  const renderEventCard = (event: any) => (
-    <TouchableOpacity
-      key={event.id}
-      style={styles.eventCard}
-      onPress={() =>
-        router.push({
-          pathname: "/(app)/events/[id]",
-          params: { id: event.id },
-        })
-      }
-    >
-      {/* <Image
-        source={{ uri: event.image }}
-        style={styles.eventImage}
-        defaultSource={require("../assets/placeholder.png")}
-      /> */}
-      <View style={styles.eventContent}>
-        <View style={styles.eventHeader}>
-          <Text style={styles.categoryText}>{event.category}</Text>
-          <Text style={styles.dotSeparator}>•</Text>
-          <Text style={styles.priceText}>{event.price}</Text>
-        </View>
-
-        <Text style={styles.eventTitle}>{event.title}</Text>
-
-        <View style={styles.eventFooter}>
-          <View style={styles.footerItem}>
-            <Feather name="calendar" size={16} color="#666" />
-            <Text style={styles.footerText}>{event.date}</Text>
-          </View>
-          <View style={styles.footerItem}>
-            <Feather name="map-pin" size={16} color="#666" />
-            <Text style={styles.footerText}>{event.location}</Text>
-          </View>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
+  const onRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setData(events); // Reset data
+      setRefreshing(false);
+    }, 1500);
+  };
 
   return (
     <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
@@ -249,43 +257,38 @@ export default function EventsScreen() {
       </View>
 
       {/* Events List */}
-      <View
-        style={{
-          borderTopLeftRadius: 25,
-          borderTopRightRadius: 25,
-          backgroundColor: "white",
-          paddingTop: 16,
-          paddingLeft: 16,
-        }}
-      >
-        <ThemedText style={{ fontSize: 15, fontWeight: "500" }}>
-          Discover Nearby Events
-        </ThemedText>
+
+      <View style={styles.eventsList}>
+        <FlatList
+          data={events}
+          renderItem={EventCard}
+          keyExtractor={(item) => item.id}
+          ListHeaderComponent={
+            <Text style={{ fontSize: 15, fontWeight: "500", marginBottom: 10 }}>
+              Discover Nearby Events
+            </Text>
+          }
+          ListEmptyComponent={
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text>No items available</Text>
+            </View>
+          }
+          ItemSeparatorComponent={() => <View style={{ marginVertical: 7 }} />}
+          onRefresh={onRefresh}
+          refreshing={refreshing}
+          showsVerticalScrollIndicator={false}
+          initialNumToRender={10}
+          maxToRenderPerBatch={6}
+          windowSize={10}
+          removeClippedSubviews={true}
+        />
       </View>
-      <ScrollView
-        contentContainerStyle={styles.eventsList}
-        showsVerticalScrollIndicator={false}
-      >
-        <EventCard
-          date="25"
-          location="Golden Gate"
-          subLocation="Arts and Culture"
-          organizer="Viewer Arts Group"
-          title="Spring Art Exhibition"
-          attendees={4}
-          backgroundColor="#10B981"
-        />
-        <EventCard
-          date="24"
-          location="San Francisco"
-          subLocation="Golden Gate Pavilion"
-          organizer="Rock Waves Production"
-          title="Summer Music Festival"
-          attendees={8}
-          backgroundColor="#4F46E5"
-        />
-        {events.map(renderEventCard)}
-      </ScrollView>
     </ThemedView>
   );
 }
@@ -353,7 +356,6 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
   },
   eventsList: {
-    gap: 16,
     padding: 16,
     backgroundColor: "white",
   },
@@ -471,32 +473,40 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 16,
     padding: 16,
+    // backgroundColor: "#10B981",
   },
   cardHeader: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    gap: 8,
     marginBottom: 16,
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   cardLocation: {
-    color: "#FFFFFF",
-    opacity: 0.9,
-    fontSize: 14,
+    fontSize: 16,
+    fontWeight: "500",
   },
   dateBadge: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    backgroundColor: slate900,
     alignItems: "center",
     justifyContent: "center",
   },
   dateText: {
-    color: "#FFFFFF",
     fontSize: 18,
     fontWeight: "600",
+    color: "white",
+  },
+  monthText: {
+    color: gray400,
+    fontSize: 11,
+    fontWeight: "500",
   },
   cardContent: {
-    marginBottom: 16,
+    marginBottom: 5,
+    marginTop: 10,
   },
   cardOrganizer: {
     color: "#FFFFFF",
