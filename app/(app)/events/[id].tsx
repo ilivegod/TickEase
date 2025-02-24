@@ -104,8 +104,8 @@ export default function EventDetailsScreen() {
         <View style={styles.content}>
           <View style={styles.header}>
             <View style={styles.titleContainer}>
-              <Text style={styles.title}>Groove Beats Day Fest</Text>
-              <Text style={styles.time}>12 PM - 2 PM</Text>
+              <Text style={styles.title}>Tidal Rave</Text>
+              <Text style={styles.time}>4 PM - 12 AM</Text>
             </View>
             <View style={styles.dateBadge}>
               <Text style={styles.dateNumber}>24</Text>
@@ -117,7 +117,7 @@ export default function EventDetailsScreen() {
             <Ionicons name="location" size={24} color="#6C8EFF" />
             <View style={styles.locationInfo}>
               <Text style={styles.locationTitle}>St Stadium, Jouers Preto</Text>
-              <Text style={styles.locationSubtext}>San Francisco, CA</Text>
+              <Text style={styles.locationSubtext}>Accra, GH</Text>
             </View>
           </View>
 
@@ -196,7 +196,7 @@ export default function EventDetailsScreen() {
         </View>
       </ScrollView>
 
-      <SafeAreaView edges={["bottom"]} style={styles.bottomContainer}>
+      <View style={styles.bottomContainer}>
         <View style={styles.priceContainer}>
           <Text style={styles.priceLabel}>Starting from</Text>
           <Text style={styles.price}>
@@ -214,7 +214,7 @@ export default function EventDetailsScreen() {
         >
           <Text style={styles.buyButtonText}>Buy Tickets</Text>
         </TouchableOpacity>
-      </SafeAreaView>
+      </View>
     </View>
   );
 }
@@ -282,10 +282,12 @@ const styles = StyleSheet.create({
   },
   dateBadge: {
     backgroundColor: "#6C8EFF",
-    borderRadius: 25,
     padding: 12,
+    justifyContent: "center",
     alignItems: "center",
-    minWidth: 56,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
   },
   dateNumber: {
     color: "#fff",
