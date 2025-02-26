@@ -1,7 +1,7 @@
 import { Tabs } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 
-export default function AppLayout() {
+export default function TabsLayout() {
   return (
     <Tabs screenOptions={{ tabBarShowLabel: true, headerShown: false }}>
       <Tabs.Screen
@@ -14,7 +14,7 @@ export default function AppLayout() {
         }}
       />
       <Tabs.Screen
-        name="tickets"
+        name="myTickets"
         options={{
           title: "My Tickets",
           tabBarIcon: ({ color }) => (
@@ -22,15 +22,7 @@ export default function AppLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: "Profile",
-          tabBarIcon: ({ color }) => (
-            <MaterialIcons name="person" size={24} color={color} />
-          ),
-        }}
-      />
+
       <Tabs.Screen
         name="settings"
         options={{

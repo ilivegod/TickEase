@@ -104,7 +104,7 @@ const Welcome = () => {
         <View style={{ marginBottom: 15 }}>
           <CustomButton
             title="Continue as a Guest"
-            onPress={() => router.replace("/(app)")}
+            onPress={() => router.replace("/(tabs)")}
             style={[
               styles.roundButton,
               {

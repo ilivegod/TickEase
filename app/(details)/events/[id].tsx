@@ -12,6 +12,11 @@ import {
 import { useLocalSearchParams, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import { ThemedView } from "../../../components/ThemedView";
+import { ThemedText } from "../../../components/ThemedText";
+import { gray100, neutral900, neutral950 } from "../../../constants/Colors";
+import { useThemeColor } from "../../../hooks/useThemeColor";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface PriceTier {
   id: string;
@@ -65,47 +70,58 @@ export default function EventDetailsScreen() {
     }
   };
 
+  const bottomBg = useThemeColor(
+    { light: neutral950, dark: "white" },
+    "background"
+  );
+
+  const insets = useSafeAreaInsets();
+
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scrollView} bounces={false}>
-        <View style={styles.imageContainer}>
-          <Image
-            source={{
-              uri: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8cGFydHl8ZW58MHx8MHx8fDA%3D",
-            }}
-            style={styles.heroImage}
-            resizeMode="cover"
-          />
-          <View style={styles.overlay}>
-            <TouchableOpacity
-              style={styles.iconButton}
-              onPress={() => router.back()}
-            >
-              <Ionicons name="chevron-back" size={24} color="white" />
+      <View style={styles.imageContainer}>
+        <Image
+          source={{
+            uri: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8cGFydHl8ZW58MHx8MHx8fDA%3D",
+          }}
+          style={styles.heroImage}
+          resizeMode="cover"
+        />
+        <View style={styles.overlay}>
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={() => router.back()}
+          >
+            <Ionicons name="chevron-back" size={24} color="white" />
+          </TouchableOpacity>
+          <View style={styles.headerButtons}>
+            <TouchableOpacity style={styles.iconButton} onPress={handleShare}>
+              <Ionicons name="share-outline" size={24} color="white" />
             </TouchableOpacity>
-            <View style={styles.headerButtons}>
-              <TouchableOpacity style={styles.iconButton} onPress={handleShare}>
-                <Ionicons name="share-outline" size={24} color="white" />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.iconButton, { marginLeft: 8 }]}
-                onPress={() => setIsBookmarked(!isBookmarked)}
-              >
-                <Ionicons
-                  name={isBookmarked ? "bookmark" : "bookmark-outline"}
-                  size={24}
-                  color="white"
-                />
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              style={[styles.iconButton, { marginLeft: 8 }]}
+              onPress={() => setIsBookmarked(!isBookmarked)}
+            >
+              <Ionicons
+                name={isBookmarked ? "bookmark" : "bookmark-outline"}
+                size={24}
+                color="white"
+              />
+            </TouchableOpacity>
           </View>
         </View>
-
-        <View style={styles.content}>
+      </View>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
+        <ThemedView lightColor="white" style={styles.content}>
           <View style={styles.header}>
             <View style={styles.titleContainer}>
-              <Text style={styles.title}>Tidal Rave</Text>
-              <Text style={styles.time}>4 PM - 12 AM</Text>
+              <ThemedText style={styles.title}>Tidal Rave</ThemedText>
+              <ThemedText type="desc" style={styles.time}>
+                4 PM - 12 AM
+              </ThemedText>
             </View>
             <View style={styles.dateBadge}>
               <Text style={styles.dateNumber}>24</Text>
@@ -113,17 +129,25 @@ export default function EventDetailsScreen() {
             </View>
           </View>
 
-          <View style={styles.locationCard}>
+          <ThemedView
+            lightColor="#F9FAFB"
+            darkColor="#262626"
+            style={styles.locationCard}
+          >
             <Ionicons name="location" size={24} color="#6C8EFF" />
             <View style={styles.locationInfo}>
-              <Text style={styles.locationTitle}>St Stadium, Jouers Preto</Text>
-              <Text style={styles.locationSubtext}>Accra, GH</Text>
+              <ThemedText style={styles.locationTitle}>
+                St Stadium, Jouers Preto
+              </ThemedText>
+              <ThemedText lightColor="#6B7280" style={styles.locationSubtext}>
+                Accra, GH
+              </ThemedText>
             </View>
-          </View>
+          </ThemedView>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>About Event</Text>
-            <Text style={styles.description}>
+            <ThemedText style={styles.sectionTitle}>About Event</ThemedText>
+            <ThemedText lightColor="#4B5563" style={styles.description}>
               {showFullDescription
                 ? description
                 : `${description.slice(0, 100)}...`}
@@ -133,33 +157,49 @@ export default function EventDetailsScreen() {
               >
                 {!showFullDescription ? " Read More" : " Show Less"}
               </Text>
-            </Text>
+            </ThemedText>
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Ticket Types</Text>
+            <ThemedText style={styles.sectionTitle}>Ticket Types</ThemedText>
             {priceTiers.map((tier) => (
-              <View key={tier.id} style={styles.ticketCard}>
+              <ThemedView
+                lightColor="#F9FAFB"
+                darkColor="#262626"
+                key={tier.id}
+                style={styles.ticketCard}
+              >
                 <View style={styles.ticketHeader}>
-                  <Text style={styles.ticketName}>{tier.name}</Text>
+                  <ThemedText style={styles.ticketName}>{tier.name}</ThemedText>
                   <Text style={styles.ticketPrice}>${tier.price}</Text>
                 </View>
-                <Text style={styles.ticketDescription}>{tier.description}</Text>
+                <ThemedText
+                  lightColor="#6B7280"
+                  style={styles.ticketDescription}
+                >
+                  {tier.description}
+                </ThemedText>
                 <View style={styles.ticketFooter}>
                   <Text style={styles.ticketAvailability}>
                     {tier.available} tickets available
                   </Text>
                 </View>
-              </View>
+              </ThemedView>
             ))}
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Event Details</Text>
-            <View style={styles.detailsCard}>
+            <ThemedText style={styles.sectionTitle}>Event Details</ThemedText>
+            <ThemedView
+              lightColor="#F9FAFB"
+              darkColor="#262626"
+              style={styles.detailsCard}
+            >
               <View style={styles.detailItem}>
                 <Ionicons name="time-outline" size={20} color="#6B7280" />
-                <Text style={styles.detailText}>Doors open at 11:30 AM</Text>
+                <ThemedText lightColor="#6B7280" style={styles.detailText}>
+                  Doors open at 11:30 AM
+                </ThemedText>
               </View>
               <View style={styles.detailItem}>
                 <Ionicons
@@ -167,44 +207,64 @@ export default function EventDetailsScreen() {
                   size={20}
                   color="#6B7280"
                 />
-                <Text style={styles.detailText}>
+                <ThemedText lightColor="#6B7280" style={styles.detailText}>
                   Live performances start at 12 PM
-                </Text>
+                </ThemedText>
               </View>
               <View style={styles.detailItem}>
                 <Ionicons name="camera-outline" size={20} color="#6B7280" />
-                <Text style={styles.detailText}>Photography allowed</Text>
+                <ThemedText lightColor="#6B7280" style={styles.detailText}>
+                  Photography allowed
+                </ThemedText>
               </View>
               <View style={styles.detailItem}>
                 <Ionicons name="fast-food-outline" size={20} color="#6B7280" />
-                <Text style={styles.detailText}>
+                <ThemedText lightColor="#6B7280" style={styles.detailText}>
                   Food and beverages available
-                </Text>
+                </ThemedText>
               </View>
-            </View>
+            </ThemedView>
           </View>
 
           <View style={styles.organizerSection}>
             <View style={styles.organizerAvatar} />
             <View style={styles.organizerInfo}>
-              <Text style={styles.organizerTitle}>
+              <ThemedText style={styles.organizerTitle}>
                 Infinity Events Organizer
-              </Text>
-              <Text style={styles.organizerSubtitle}>Event Organizer</Text>
+              </ThemedText>
+              <ThemedText type="desc" style={styles.organizerSubtitle}>
+                Event Organizer
+              </ThemedText>
             </View>
           </View>
-        </View>
+        </ThemedView>
       </ScrollView>
 
-      <View style={styles.bottomContainer}>
+      <ThemedView
+        lightColor="#F9FAFB"
+        darkColor="#171717"
+        style={[
+          styles.bottomContainer,
+          {
+            paddingBottom: insets.bottom,
+          },
+        ]}
+      >
         <View style={styles.priceContainer}>
-          <Text style={styles.priceLabel}>Starting from</Text>
-          <Text style={styles.price}>
+          <ThemedText type="desc" style={styles.priceLabel}>
+            Starting from
+          </ThemedText>
+          <ThemedText style={styles.price}>
             ${Math.min(...priceTiers.map((t) => t.price))}
-          </Text>
+          </ThemedText>
         </View>
         <TouchableOpacity
-          style={styles.buyButton}
+          style={[
+            styles.buyButton,
+            {
+              backgroundColor: bottomBg,
+            },
+          ]}
           onPress={() =>
             router.push({
               pathname: "/checkout",
@@ -212,9 +272,15 @@ export default function EventDetailsScreen() {
             })
           }
         >
-          <Text style={styles.buyButtonText}>Buy Tickets</Text>
+          <ThemedText
+            lightColor="white"
+            darkColor="black"
+            style={styles.buyButtonText}
+          >
+            Buy Tickets
+          </ThemedText>
         </TouchableOpacity>
-      </View>
+      </ThemedView>
     </View>
   );
 }
@@ -222,13 +288,12 @@ export default function EventDetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
   },
   scrollView: {
     flex: 1,
   },
   imageContainer: {
-    height: 350,
+    height: 280,
     position: "relative",
     backgroundColor: "#f3f4f6",
   },
@@ -238,7 +303,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     position: "absolute",
-    top: 0,
+    top: 40,
     left: 0,
     right: 0,
     flexDirection: "row",
@@ -252,7 +317,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    backgroundColor: "rgba(154, 154, 154, 0.8)",
 
     alignItems: "center",
     justifyContent: "center",
@@ -273,12 +338,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "600",
-    color: "#111827",
+
     marginBottom: 4,
   },
   time: {
     fontSize: 16,
-    color: "#6B7280",
   },
   dateBadge: {
     backgroundColor: "#6C8EFF",
@@ -301,7 +365,7 @@ const styles = StyleSheet.create({
   locationCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F9FAFB",
+
     padding: 16,
     borderRadius: 12,
     marginBottom: 24,
@@ -312,7 +376,6 @@ const styles = StyleSheet.create({
   locationTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#111827",
   },
   locationSubtext: {
     fontSize: 14,
@@ -325,20 +388,18 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#111827",
+
     marginBottom: 12,
   },
   description: {
     fontSize: 14,
     lineHeight: 20,
-    color: "#4B5563",
   },
   readMore: {
     color: "#6C8EFF",
     fontWeight: "600",
   },
   ticketCard: {
-    backgroundColor: "#F9FAFB",
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
@@ -352,7 +413,6 @@ const styles = StyleSheet.create({
   ticketName: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#111827",
   },
   ticketPrice: {
     fontSize: 18,
@@ -361,7 +421,7 @@ const styles = StyleSheet.create({
   },
   ticketDescription: {
     fontSize: 14,
-    color: "#6B7280",
+
     marginBottom: 8,
   },
   ticketFooter: {
@@ -375,7 +435,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   detailsCard: {
-    backgroundColor: "#F9FAFB",
     borderRadius: 12,
     padding: 16,
   },
@@ -387,7 +446,6 @@ const styles = StyleSheet.create({
   detailText: {
     marginLeft: 12,
     fontSize: 14,
-    color: "#4B5563",
   },
   organizerSection: {
     flexDirection: "row",
@@ -407,17 +465,15 @@ const styles = StyleSheet.create({
   organizerTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#111827",
   },
   organizerSubtitle: {
     fontSize: 14,
-    color: "#6B7280",
   },
   bottomContainer: {
-    backgroundColor: "#fff",
-    borderTopWidth: 1,
+    borderTopWidth: 0.5,
     borderTopColor: "#E5E7EB",
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingTop: 10,
     flexDirection: "row",
     alignItems: "center",
   },
@@ -426,22 +482,18 @@ const styles = StyleSheet.create({
   },
   priceLabel: {
     fontSize: 12,
-    color: "#6B7280",
   },
   price: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#111827",
   },
   buyButton: {
-    backgroundColor: "#0F172A",
     paddingVertical: 14,
     paddingHorizontal: 24,
     borderRadius: 100,
     minWidth: 140,
   },
   buyButtonText: {
-    color: "#fff",
     fontSize: 16,
     fontWeight: "600",
     textAlign: "center",

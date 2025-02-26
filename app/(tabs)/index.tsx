@@ -66,6 +66,41 @@ const events = [
     category: "Food",
     image: "https://your-image-url.com/3",
   },
+  {
+    id: "4",
+    title: "Summer Music Festival",
+    date: "15",
+    month: "Aug",
+    location: "Accra",
+    subLocation: "Garage night club",
+    organizer: "Rock Waves Production",
+
+    category: "Music",
+  },
+  {
+    id: "5",
+    title: "Tech Conference 2024",
+    date: "20",
+    month: "Sept",
+
+    location: "Accra",
+    subLocation: "Garage night club",
+    organizer: "Viewer Arts Group",
+
+    category: "Technology",
+  },
+  {
+    id: "6",
+    title: "Food & Wine Festival",
+    date: "5",
+    month: "Oct",
+
+    location: "Accra",
+    subLocation: "Garage night club",
+    organizer: "BET",
+    category: "Food",
+    image: "https://your-image-url.com/3",
+  },
 ];
 
 const categoryColors: Record<string, string> = {
@@ -119,7 +154,7 @@ const EventCard = ({ item }: { item: any }) => {
       style={[styles.card, { backgroundColor }]}
       onPress={() =>
         router.push({
-          pathname: "/(app)/events/[id]",
+          pathname: "/(details)/events/[id]",
           params: { id: item.id },
         })
       }
@@ -258,15 +293,17 @@ export default function EventsScreen() {
 
       {/* Events List */}
 
-      <View style={styles.eventsList}>
+      <ThemedView style={styles.eventsList}>
         <FlatList
           data={events}
           renderItem={EventCard}
           keyExtractor={(item) => item.id}
           ListHeaderComponent={
-            <Text style={{ fontSize: 15, fontWeight: "500", marginBottom: 10 }}>
+            <ThemedText
+              style={{ fontSize: 15, fontWeight: "500", marginBottom: 10 }}
+            >
               Discover Nearby Events
-            </Text>
+            </ThemedText>
           }
           ListEmptyComponent={
             <View
@@ -288,7 +325,7 @@ export default function EventsScreen() {
           windowSize={10}
           removeClippedSubviews={true}
         />
-      </View>
+      </ThemedView>
     </ThemedView>
   );
 }
@@ -302,7 +339,6 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 16,
     paddingTop: 16,
-    paddingBottom: 12,
   },
   topSide: {
     flexDirection: "row",
@@ -356,8 +392,10 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
   },
   eventsList: {
-    padding: 16,
-    backgroundColor: "white",
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 8,
+    flex: 1,
   },
   eventCard: {
     backgroundColor: "#FFFFFF",
