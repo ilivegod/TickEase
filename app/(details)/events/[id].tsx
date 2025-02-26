@@ -22,7 +22,6 @@ interface PriceTier {
   id: string;
   name: string;
   price: number;
-  å;
   available: number;
   description: string;
 }
@@ -267,7 +266,7 @@ export default function EventDetailsScreen() {
           ]}
           onPress={() =>
             router.push({
-              pathname: "/checkout",
+              pathname: "(details)/payment/[eventId]",
               params: { eventId: id },
             })
           }
