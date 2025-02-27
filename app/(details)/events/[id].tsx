@@ -29,14 +29,14 @@ interface PriceTier {
 const priceTiers = [
   {
     id: "1",
-    name: "Early Bird",
+    name: " Basic",
     price: 49.99,
     available: 50,
     description: "Limited early bird tickets",
   },
   {
     id: "2",
-    name: "Regular",
+    name: "Premium",
     price: 79.99,
     available: 100,
     description: "Regular admission ticket",
@@ -178,11 +178,7 @@ export default function EventDetailsScreen() {
                 >
                   {tier.description}
                 </ThemedText>
-                <View style={styles.ticketFooter}>
-                  <Text style={styles.ticketAvailability}>
-                    {tier.available} tickets available
-                  </Text>
-                </View>
+                <View style={styles.ticketFooter}></View>
               </ThemedView>
             ))}
           </View>
@@ -266,7 +262,7 @@ export default function EventDetailsScreen() {
           ]}
           onPress={() =>
             router.push({
-              pathname: "(details)/payment/[eventId]",
+              pathname: "(details)/ticketsSelection/[eventId]",
               params: { eventId: id },
             })
           }
