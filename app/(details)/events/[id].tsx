@@ -114,7 +114,7 @@ export default function EventDetailsScreen() {
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
       >
-        <ThemedView lightColor="white" style={styles.content}>
+        <ThemedView style={styles.content}>
           <View style={styles.header}>
             <View style={styles.titleContainer}>
               <ThemedText style={styles.title}>Tidal Rave</ThemedText>
@@ -129,7 +129,7 @@ export default function EventDetailsScreen() {
           </View>
 
           <ThemedView
-            lightColor="#F9FAFB"
+            lightColor="white"
             darkColor="#262626"
             style={styles.locationCard}
           >
@@ -163,7 +163,7 @@ export default function EventDetailsScreen() {
             <ThemedText style={styles.sectionTitle}>Ticket Types</ThemedText>
             {priceTiers.map((tier) => (
               <ThemedView
-                lightColor="#F9FAFB"
+                lightColor="white"
                 darkColor="#262626"
                 key={tier.id}
                 style={styles.ticketCard}
@@ -186,7 +186,7 @@ export default function EventDetailsScreen() {
           <View style={styles.section}>
             <ThemedText style={styles.sectionTitle}>Event Details</ThemedText>
             <ThemedView
-              lightColor="#F9FAFB"
+              lightColor="white"
               darkColor="#262626"
               style={styles.detailsCard}
             >

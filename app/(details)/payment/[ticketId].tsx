@@ -20,6 +20,10 @@ import {
 } from "lucide-react-native";
 import { router } from "expo-router";
 import { ThemedText } from "../../../components/ThemedText";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ThemedView } from "../../../components/ThemedView";
+import { useThemeColor } from "../../../hooks/useThemeColor";
+import { neutral800, neutral900 } from "../../../constants/Colors";
 
 export default function PurchaseScreen({ route, navigation }) {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
@@ -36,6 +40,21 @@ export default function PurchaseScreen({ route, navigation }) {
 
   const fees = 12.99;
   const total = ticket.price + fees;
+
+  const paymentCardsColor = useThemeColor(
+    { light: "white", dark: neutral800 },
+    "background"
+  );
+
+  const totalPriceBg = useThemeColor(
+    { light: "#4F46E5", dark: "#60a5fa" },
+    "background"
+  );
+
+  const paymentCardsBorder = useThemeColor(
+    { light: "black", dark: "white" },
+    "background"
+  );
 
   const paymentMethods = [
     {
@@ -85,8 +104,15 @@ export default function PurchaseScreen({ route, navigation }) {
     }
   };
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <SafeAreaView style={styles.container}>
+    <ThemedView
+      style={[
+        styles.container,
+        { marginTop: insets.top, marginBottom: insets.bottom },
+      ]}
+    >
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
@@ -94,7 +120,7 @@ export default function PurchaseScreen({ route, navigation }) {
           accessible={true}
           accessibilityLabel="Go back"
         >
-          <ChevronLeft color="#000" size={24} />
+          <ChevronLeft color="white" size={24} />
         </TouchableOpacity>
         <ThemedText style={styles.headerTitle}>Confirm Purchase</ThemedText>
       </View>
@@ -102,20 +128,28 @@ export default function PurchaseScreen({ route, navigation }) {
       <ScrollView showsVerticalScrollIndicator={false} style={styles.content}>
         <View style={styles.ticketSummary}>
           <ThemedText style={styles.sectionTitle}>Ticket Summary</ThemedText>
-          <View style={styles.ticketCard}>
+          <View
+            style={[styles.ticketCard, { backgroundColor: paymentCardsColor }]}
+          >
             <View
               style={[styles.ticketBadge, { backgroundColor: ticket.color }]}
             >
               <Text style={styles.ticketBadgeText}>{ticket.name}</Text>
             </View>
-            <Text style={styles.ticketPrice}>${ticket.price}</Text>
+            <ThemedText style={styles.ticketPrice}>${ticket.price}</ThemedText>
           </View>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Email</Text>
+          <ThemedText style={styles.sectionTitle}>Email</ThemedText>
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              {
+                backgroundColor: paymentCardsColor,
+                borderColor: paymentCardsBorder,
+              },
+            ]}
             placeholder="Enter your email"
             value={email}
             onChangeText={setEmail}
@@ -128,7 +162,7 @@ export default function PurchaseScreen({ route, navigation }) {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Payment Method</Text>
+          <ThemedText style={styles.sectionTitle}>Payment Method</ThemedText>
           {paymentMethods.map((method) => {
             if (!method.available) return null;
             const IconComponent = method.icon;
@@ -137,6 +171,7 @@ export default function PurchaseScreen({ route, navigation }) {
                 key={method.id}
                 style={[
                   styles.paymentMethod,
+                  { backgroundColor: paymentCardsColor },
                   selectedPaymentMethod === method.id && styles.selectedPayment,
                 ]}
                 onPress={() => setSelectedPaymentMethod(method.id)}
@@ -166,24 +201,39 @@ export default function PurchaseScreen({ route, navigation }) {
           })}
         </View>
 
-        <View style={styles.priceBreakdown}>
-          <Text style={styles.sectionTitle}>Price Breakdown</Text>
+        <View
+          style={[
+            styles.priceBreakdown,
+            { backgroundColor: paymentCardsColor },
+          ]}
+        >
+          <ThemedText style={styles.sectionTitle}>Price Breakdown</ThemedText>
           <View style={styles.priceRow}>
-            <Text style={styles.priceLabel}>Ticket Price</Text>
-            <Text style={styles.priceValue}>${ticket.price.toFixed(2)}</Text>
+            <ThemedText type="desc" style={styles.priceLabel}>
+              Ticket Price
+            </ThemedText>
+            <ThemedText style={styles.priceValue}>
+              ${ticket.price.toFixed(2)}
+            </ThemedText>
           </View>
           <View style={styles.priceRow}>
-            <Text style={styles.priceLabel}>Service Fee</Text>
-            <Text style={styles.priceValue}>${fees.toFixed(2)}</Text>
+            <ThemedText type="desc" style={styles.priceLabel}>
+              Service Fee
+            </ThemedText>
+            <ThemedText style={styles.priceValue}>
+              ${fees.toFixed(2)}
+            </ThemedText>
           </View>
           <View style={[styles.priceRow, styles.totalRow]}>
-            <Text style={styles.totalLabel}>Total</Text>
-            <Text style={styles.totalValue}>${total.toFixed(2)}</Text>
+            <ThemedText style={styles.totalLabel}>Total</ThemedText>
+            <Text style={[styles.totalValue, { color: totalPriceBg }]}>
+              ${total.toFixed(2)}
+            </Text>
           </View>
         </View>
       </ScrollView>
 
-      <View style={styles.footer}>
+      <ThemedView lightColor="white" style={styles.footer}>
         <TouchableOpacity
           style={[
             styles.purchaseButton,
@@ -203,40 +253,41 @@ export default function PurchaseScreen({ route, navigation }) {
             {isProcessing ? "Processing..." : "Complete Purchase"}
           </Text>
         </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+      </ThemedView>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
-    backgroundColor: "white",
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    justifyContent: "center",
   },
   backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(154, 154, 154, 0.3)",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "absolute",
+    left: 16,
+    zIndex: 1,
     padding: 8,
-    marginRight: 8,
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: "bold",
-    flex: 1,
-    textAlign: "center",
-    marginRight: 40,
+    paddingVertical: 20,
   },
   content: {
     flex: 1,
   },
   section: {
-    backgroundColor: "white",
     padding: 16,
     marginBottom: 16,
   },
@@ -246,7 +297,6 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   ticketSummary: {
-    backgroundColor: "white",
     padding: 16,
     marginBottom: 16,
   },
@@ -254,7 +304,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#f8f8f8",
+
     paddingHorizontal: 16,
     paddingVertical: 20,
     borderRadius: 8,
@@ -273,22 +323,21 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   input: {
-    borderWidth: 1,
-    borderColor: "#ddd",
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
+    borderWidth: 1,
   },
   paymentMethod: {
     flexDirection: "row",
     alignItems: "center",
     padding: 16,
-    borderWidth: 1,
-    borderColor: "#ddd",
+
     borderRadius: 8,
     marginBottom: 8,
   },
   selectedPayment: {
+    borderWidth: 1,
     borderColor: "#4F46E5",
     backgroundColor: "#F5F3FF",
   },
@@ -302,9 +351,10 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   priceBreakdown: {
-    backgroundColor: "white",
     padding: 16,
     marginBottom: 16,
+    marginHorizontal: 15,
+    borderRadius: 8,
   },
   priceRow: {
     flexDirection: "row",
@@ -312,7 +362,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   priceLabel: {
-    color: "#666",
+    fontSize: 14,
   },
   priceValue: {
     fontWeight: "500",
@@ -330,11 +380,10 @@ const styles = StyleSheet.create({
   totalValue: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#4F46E5",
   },
   footer: {
     padding: 16,
-    backgroundColor: "white",
+
     borderTopWidth: 1,
     borderTopColor: "#eee",
   },

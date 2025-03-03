@@ -378,7 +378,7 @@ export default function SignUpScreen() {
             <ThemedText type="desc" style={{ fontSize: 16 }}>
               Or continue as a
             </ThemedText>
-            <Link href={"(auth)/sign-up"}>
+            <Link href={"(tabs)/"}>
               <ThemedText style={{ fontSize: 16, fontWeight: "700" }}>
                 Guest
               </ThemedText>

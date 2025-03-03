@@ -11,6 +11,7 @@ import {
   Dimensions,
   useColorScheme,
   FlatList,
+  TextInput,
 } from "react-native";
 import { router } from "expo-router";
 import { Feather } from "@expo/vector-icons";
@@ -28,6 +29,7 @@ import {
   neutral950,
   slate900,
 } from "../../constants/Colors";
+import { Search } from "lucide-react-native";
 
 // Mock data - in real app this would come from an API
 const events = [
@@ -198,6 +200,7 @@ export default function EventsScreen() {
   const colorScheme = useColorScheme();
   const insets = useSafeAreaInsets();
   const [selectedCategory, setSelectedCategory] = useState("All Events");
+  const [searchClicked, setSearchClicked] = useState(false);
 
   const headerBgColor = useThemeColor(
     { light: gray100, dark: neutral950 },
@@ -224,6 +227,81 @@ export default function EventsScreen() {
     }, 1500);
   };
 
+  const handleSearchPress = () => {
+    setSearchClicked(!searchClicked);
+  };
+
+  if (searchClicked)
+    return (
+      <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
+        <StatusBar barStyle="dark-content" />
+
+        {/* Header */}
+        <View
+          style={[
+            styles.header,
+            {
+              backgroundColor: headerBgColor,
+              marginBottom: 2,
+            },
+          ]}
+        >
+          {/* Search Bar */}
+
+          <View style={styles.searchContainer}>
+            <Search size={20} color="gray" style={styles.icon} />
+            <TextInput
+              placeholder="Search events"
+              style={styles.input}
+              placeholderTextColor="#9CA3AF"
+            />
+          </View>
+          <TouchableOpacity onPress={() => setSearchClicked(!searchClicked)}>
+            <ThemedText
+              type="desc"
+              style={{
+                textDecorationLine: "underline",
+                fontSize: 16,
+                paddingVertical: 10,
+              }}
+            >
+              Back to Discover
+            </ThemedText>
+          </TouchableOpacity>
+        </View>
+        {/* Events List */}
+
+        <ThemedView style={styles.eventsList}>
+          <FlatList
+            data={events}
+            renderItem={EventCard}
+            keyExtractor={(item) => item.id}
+            ListEmptyComponent={
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text>No items available</Text>
+              </View>
+            }
+            ItemSeparatorComponent={() => (
+              <View style={{ marginVertical: 7 }} />
+            )}
+            onRefresh={onRefresh}
+            refreshing={refreshing}
+            showsVerticalScrollIndicator={false}
+            initialNumToRender={10}
+            maxToRenderPerBatch={6}
+            windowSize={10}
+            removeClippedSubviews={true}
+          />
+        </ThemedView>
+      </ThemedView>
+    );
+
   return (
     <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar barStyle="dark-content" />
@@ -242,7 +320,10 @@ export default function EventsScreen() {
             source={require("../../assets/images/jake-nackos-IF9TK5Uy-KI-unsplash.jpg")}
             style={styles.profileImage}
           />
-          <TouchableOpacity style={styles.searchButton}>
+          <TouchableOpacity
+            onPress={handleSearchPress}
+            style={styles.searchButton}
+          >
             <Feather name="search" size={24} color="black" />
           </TouchableOpacity>
         </View>
@@ -335,6 +416,24 @@ const { width } = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 0.5,
+    borderColor: "#D1D5DB",
+    borderRadius: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 13,
+    backgroundColor: "white",
+  },
+  icon: {
+    marginRight: 10,
+  },
+  input: {
+    flex: 1,
+    fontSize: 16,
+    color: "#4B5563",
   },
   header: {
     paddingHorizontal: 16,

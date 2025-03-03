@@ -30,7 +30,7 @@ import { Link } from "expo-router";
 
 // Form validation schema
 const signUpSchema = z.object({
-  email: z.string().email("Invalid email address"),
+  email: z.string().email("Invalid email address or Username"),
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
@@ -139,7 +139,7 @@ export default function SignUpScreen() {
                     ]}
                     onChangeText={onChange}
                     value={value}
-                    placeholder="Enter your email"
+                    placeholder="Enter your email "
                     placeholderTextColor="#A0AEC0"
                     keyboardType="email-address"
                     autoCapitalize="none"
@@ -273,7 +273,7 @@ export default function SignUpScreen() {
             <ThemedText type="desc" style={{ fontSize: 16 }}>
               Or continue as a
             </ThemedText>
-            <Link href={"(auth)/sign-up"}>
+            <Link href={"(tabs)"}>
               <ThemedText style={{ fontSize: 16, fontWeight: "700" }}>
                 Guest
               </ThemedText>
