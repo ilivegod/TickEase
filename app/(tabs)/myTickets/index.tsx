@@ -13,6 +13,12 @@ import {
 } from "react-native";
 
 import QRCode from "react-native-qrcode-svg";
+import { useThemeColor } from "../../../hooks/useThemeColor";
+import { ThemedView } from "../../../components/ThemedView";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { router } from "expo-router";
+import { gray100, gray200, gray400 } from "../../../constants/Colors";
+import { ThemedText } from "../../../components/ThemedText";
 
 // Sample ticket data
 const ticketData = [
@@ -26,13 +32,13 @@ const ticketData = [
   {
     id: "2",
     eventName: "Tech Conference 2024",
-    date: "2024-06-22T09:00:00",
+    date: "2025-06-22T09:00:00",
     qrData: "TICKET-TECH-002-2024",
     status: "valid",
   },
   {
     id: "3",
-    eventName: "Comedy Night",
+    eventName: "Tidal Rave",
     date: "2024-05-10T20:00:00",
     qrData: "TICKET-COMEDY-003-2024",
     status: "used",
@@ -46,7 +52,7 @@ const ticketData = [
   },
   {
     id: "5",
-    eventName: "Basketball Game",
+    eventName: "MTN FA Cup Game",
     date: "2024-08-12T19:30:00",
     qrData: "TICKET-BBALL-005-2024",
     status: "valid",
@@ -55,8 +61,8 @@ const ticketData = [
 
 const TicketScreen = () => {
   const [filter, setFilter] = useState("all");
-  const [selectedTicket, setSelectedTicket] = useState(null);
-  const [qrModalVisible, setQrModalVisible] = useState(false);
+
+  const insets = useSafeAreaInsets();
 
   // Get current date for filtering
   const currentDate = new Date();
@@ -70,11 +76,16 @@ const TicketScreen = () => {
     } else if (filter === "past") {
       return ticketDate < currentDate;
     }
-    return true; // 'all' filter
+    return true;
   });
 
+  const buttonColor = useThemeColor(
+    { light: "black", dark: "white" },
+    "background"
+  );
+
   // Format date to be more readable
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: any) => {
     const options = {
       weekday: "short",
       year: "numeric",
@@ -87,7 +98,7 @@ const TicketScreen = () => {
   };
 
   // Get status color based on ticket status
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: any) => {
     switch (status) {
       case "valid":
         return "#4CAF50"; // Green
@@ -100,17 +111,11 @@ const TicketScreen = () => {
     }
   };
 
-  // Show QR code modal
-  const showQRCode = (ticket) => {
-    setSelectedTicket(ticket);
-    setQrModalVisible(true);
-  };
-
   // Render individual ticket item
   const renderTicketItem = ({ item }) => (
-    <View style={styles.ticketItem}>
+    <ThemedView style={styles.ticketItem}>
       <View style={styles.ticketHeader}>
-        <Text style={styles.eventName}>{item.eventName}</Text>
+        <ThemedText style={styles.eventName}>{item.eventName}</ThemedText>
         <View
           style={[
             styles.statusBadge,
@@ -121,27 +126,42 @@ const TicketScreen = () => {
         </View>
       </View>
 
-      <Text style={styles.dateText}>{formatDate(item.date)}</Text>
+      <ThemedText type="desc" style={styles.dateText}>
+        {formatDate(item.date)}
+      </ThemedText>
 
       <TouchableOpacity
-        style={[
-          styles.qrButton,
-          {
-            backgroundColor: "#1d4ed8",
-          },
-        ]}
-        onPress={() => showQRCode(item)}
+        style={[styles.qrButton]}
+        onPress={() => router.push(`(details)/singleTicket/${item.id}`)}
       >
-        <Text style={styles.qrButtonText}>Show Ticket</Text>
+        <Text
+          style={[
+            styles.qrButtonText,
+            {
+              color: buttonColor,
+            },
+          ]}
+        >
+          Show Ticket
+        </Text>
       </TouchableOpacity>
-    </View>
+    </ThemedView>
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ThemedView
+      lightColor={gray100}
+      style={[
+        styles.container,
+        {
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+        },
+      ]}
+    >
       <StatusBar barStyle="dark-content" />
 
-      <Text style={styles.title}>My Tickets</Text>
+      <ThemedText style={styles.title}>My Tickets</ThemedText>
 
       {/* Filter options */}
       <View style={styles.filterContainer}>
@@ -207,69 +227,24 @@ const TicketScreen = () => {
           <Text style={styles.emptyText}>No tickets found</Text>
         </View>
       )}
-
-      {/* QR Code Modal */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={qrModalVisible}
-        onRequestClose={() => setQrModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            {selectedTicket && (
-              <>
-                <Text style={styles.modalTitle}>
-                  {selectedTicket.eventName}
-                </Text>
-                <Text style={styles.modalDate}>
-                  {formatDate(selectedTicket.date)}
-                </Text>
-
-                <View style={styles.qrContainer}>
-                  <QRCode value={selectedTicket.qrData} size={200} />
-                </View>
-
-                <View
-                  style={[
-                    styles.modalStatusBadge,
-                    { backgroundColor: getStatusColor(selectedTicket.status) },
-                  ]}
-                >
-                  <Text style={styles.modalStatusText}>
-                    {selectedTicket.status.toUpperCase()}
-                  </Text>
-                </View>
-
-                <Text style={styles.ticketIdText}>
-                  Ticket ID: {selectedTicket.qrData}
-                </Text>
-
-                <TouchableOpacity
-                  style={styles.closeButton}
-                  onPress={() => setQrModalVisible(false)}
-                >
-                  <Text style={styles.closeButtonText}>Close</Text>
-                </TouchableOpacity>
-              </>
-            )}
-          </View>
-        </View>
-      </Modal>
-    </SafeAreaView>
+    </ThemedView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F5F5",
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     margin: 16,
-    color: "#333",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
   },
   filterContainer: {
     flexDirection: "row",
@@ -298,15 +273,12 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   ticketItem: {
-    backgroundColor: "white",
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
     elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
+    borderWidth: 1,
+    borderColor: gray400,
   },
   ticketHeader: {
     flexDirection: "row",
@@ -317,7 +289,7 @@ const styles = StyleSheet.create({
   eventName: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#333",
+
     flex: 1,
   },
   statusBadge: {
@@ -332,18 +304,23 @@ const styles = StyleSheet.create({
   },
   dateText: {
     fontSize: 14,
-    color: "#666",
+
     marginBottom: 12,
   },
   qrButton: {
-    padding: 10,
+    padding: 1,
     borderRadius: 6,
     alignItems: "center",
-    marginTop: 8,
   },
   qrButtonText: {
-    color: "white",
     fontWeight: "500",
+  },
+  ticketContainer: {
+    backgroundColor: "#9f1239",
+    borderRadius: 24,
+    overflow: "hidden",
+    position: "relative",
+    height: "90%",
   },
   emptyContainer: {
     flex: 1,
@@ -362,6 +339,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: "80%",
+
     backgroundColor: "white",
     borderRadius: 16,
     padding: 24,

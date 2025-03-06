@@ -136,28 +136,6 @@ const categoryTextColors: Record<string, string> = {
   Art: "#e11d48",
 };
 
-// {
-//   id,
-//   date,
-//   month,
-//   location,
-//   subLocation,
-//   organizer,
-//   title,
-//   attendees,
-//   backgroundColor,
-// }: {
-//   id: any;
-//   date: string;
-//   month: string;
-//   location: string;
-//   subLocation: string;
-//   organizer: string;
-//   title: string;
-//   attendees: number;
-//   backgroundColor: string;
-// }
-
 const EventCard = ({ item }: { item: any }) => {
   const backgroundColor =
     categoryColors[item.category] || categoryColors["Music"];
@@ -216,6 +194,7 @@ export default function EventsScreen() {
   const insets = useSafeAreaInsets();
   const [selectedCategory, setSelectedCategory] = useState("All Events");
   const [searchClicked, setSearchClicked] = useState(false);
+  const [filteredEvents, setFilteredEvents] = useState(events);
 
   const fadeAnim = useAnimatedValue(0);
 
@@ -256,6 +235,11 @@ export default function EventsScreen() {
   const handleSearchPress = () => {
     setSearchClicked(!searchClicked);
   };
+
+  const filteredCategories = events.filter((category) => {
+    if (category.category === "Music") {
+    }
+  });
 
   return (
     <ThemedView style={[styles.container, { paddingTop: insets.top }]}>

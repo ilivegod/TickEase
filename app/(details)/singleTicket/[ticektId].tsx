@@ -19,9 +19,13 @@ import {
   neutral950,
 } from "../../../constants/Colors";
 import { useThemeColor } from "../../../hooks/useThemeColor";
+import { router, useLocalSearchParams } from "expo-router";
+import { goBack } from "expo-router/build/global-state/routing";
 
 const ETicket = () => {
   const insets = useSafeAreaInsets();
+
+  const { id } = useLocalSearchParams();
 
   const [qrCodeClicked, setQrCodeClicked] = useState(false);
 
@@ -125,6 +129,7 @@ const ETicket = () => {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
+          onPress={() => router.back()}
           style={[
             styles.iconButton,
             {

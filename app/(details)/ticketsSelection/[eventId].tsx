@@ -64,10 +64,7 @@ export default function Payment() {
 
   const handlePurchase = () => {
     // Handle purchase logic here
-    router.push({
-      pathname: "(details)/singleTicket/[ticketId]",
-      params: { eventId: id },
-    });
+    router.push("tabs");
     console.log(`Purchasing ${selectedTier} ticket`);
   };
 
