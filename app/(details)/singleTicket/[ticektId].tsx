@@ -50,8 +50,8 @@ const ETicket = () => {
         style={[
           styles.container,
           {
-            marginTop: insets.top,
-            marginBottom: insets.bottom,
+            paddingTop: insets.top,
+            paddingBottom: insets.bottom,
           },
         ]}
       >
@@ -118,8 +118,8 @@ const ETicket = () => {
       style={[
         styles.container,
         {
-          marginTop: insets.top,
-          marginBottom: insets.bottom,
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
         },
       ]}
     >
