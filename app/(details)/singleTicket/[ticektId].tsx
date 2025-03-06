@@ -1,44 +1,155 @@
 import { ChevronLeft, Ellipsis } from "lucide-react-native";
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
-  Image,
   StyleSheet,
-  SafeAreaView,
   TouchableOpacity,
   StatusBar,
 } from "react-native";
 
 import QRCode from "react-native-qrcode-svg";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ThemedView } from "../../../components/ThemedView";
+import { ThemedText } from "../../../components/ThemedText";
+import {
+  gray100,
+  gray200,
+  neutral800,
+  neutral950,
+} from "../../../constants/Colors";
+import { useThemeColor } from "../../../hooks/useThemeColor";
 
 const ETicket = () => {
+  const insets = useSafeAreaInsets();
+
+  const [qrCodeClicked, setQrCodeClicked] = useState(false);
+
+  const notchBg = useThemeColor(
+    { light: gray100, dark: neutral950 },
+    "background"
+  );
+
+  const buttonsBg = useThemeColor(
+    { light: gray200, dark: neutral800 },
+    "background"
+  );
+
+  const iconColor = useThemeColor(
+    { light: "black", dark: "white" },
+    "background"
+  );
+
+  if (qrCodeClicked)
+    return (
+      <ThemedView
+        style={[
+          styles.container,
+          {
+            marginTop: insets.top,
+            marginBottom: insets.bottom,
+          },
+        ]}
+      >
+        {/* Status Bar */}
+        <StatusBar barStyle="dark-content" />
+
+        {/* Header */}
+
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => setQrCodeClicked(false)}
+            style={[
+              styles.iconButton,
+              {
+                backgroundColor: buttonsBg,
+              },
+            ]}
+          >
+            <ChevronLeft width={24} height={24} color={iconColor} />
+          </TouchableOpacity>
+          <ThemedText style={styles.headerTitle}>E-Ticket</ThemedText>
+          <TouchableOpacity
+            style={[
+              styles.iconButton,
+              {
+                backgroundColor: buttonsBg,
+              },
+            ]}
+          >
+            <Ellipsis width={24} height={24} color={iconColor} />
+          </TouchableOpacity>
+        </View>
+
+        {/* Ticket Card */}
+        <View
+          style={[
+            styles.QRCodeContainer,
+            {
+              marginTop: 60,
+            },
+          ]}
+        >
+          {/* Event Image */}
+
+          {/* Ticket Content */}
+
+          {/* QR Code */}
+          <TouchableOpacity
+            onPress={() => setQrCodeClicked(true)}
+            style={styles.qrCodeContainer}
+          >
+            <QRCode
+              value="GBD99763JS-GROOVE-BEATS-DAY-FEST-24092024"
+              size={280}
+              backgroundColor="transparent"
+              color="#000"
+            />
+          </TouchableOpacity>
+        </View>
+      </ThemedView>
+    );
   return (
-    <SafeAreaView style={styles.container}>
+    <ThemedView
+      style={[
+        styles.container,
+        {
+          marginTop: insets.top,
+          marginBottom: insets.bottom,
+        },
+      ]}
+    >
       {/* Status Bar */}
       <StatusBar barStyle="dark-content" />
 
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.iconButton}>
-          <ChevronLeft width={24} height={24} color="#000" />
+        <TouchableOpacity
+          style={[
+            styles.iconButton,
+            {
+              backgroundColor: buttonsBg,
+            },
+          ]}
+        >
+          <ChevronLeft width={24} height={24} color={iconColor} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>E-Ticket</Text>
-        <TouchableOpacity style={styles.iconButton}>
-          <Ellipsis width={24} height={24} color="#000" />
+        <ThemedText style={styles.headerTitle}>E-Ticket</ThemedText>
+        <TouchableOpacity
+          style={[
+            styles.iconButton,
+            {
+              backgroundColor: buttonsBg,
+            },
+          ]}
+        >
+          <Ellipsis width={24} height={24} color={iconColor} />
         </TouchableOpacity>
       </View>
 
       {/* Ticket Card */}
       <View style={styles.ticketContainer}>
         {/* Event Image */}
-        <Image
-          source={{
-            uri: "https://source.unsplash.com/random/400x200/?concert",
-          }}
-          style={styles.eventImage}
-          resizeMode="cover"
-        />
 
         {/* Ticket Content */}
         <View style={styles.ticketContent}>
@@ -60,7 +171,7 @@ const ETicket = () => {
           <View style={styles.detailsGrid}>
             <View style={styles.detailColumn}>
               <Text style={styles.detailLabel}>Check In Type</Text>
-              <Text style={styles.detailValue}>VIP Experia - D</Text>
+              <Text style={styles.detailValue}>VIP </Text>
             </View>
             <View style={styles.detailColumn}>
               <Text style={styles.detailLabel}>Order ID</Text>
@@ -70,7 +181,7 @@ const ETicket = () => {
 
           <View style={styles.placeContainer}>
             <Text style={styles.detailLabel}>Place</Text>
-            <Text style={styles.detailValue}>
+            <Text style={styles.detailValuePlace}>
               St Stadium Jouers Preto, San Fransisco Florida, United States
             </Text>
           </View>
@@ -79,35 +190,52 @@ const ETicket = () => {
           <View style={styles.dashedLine} />
 
           {/* QR Code */}
-          <View style={styles.qrCodeContainer}>
+          <TouchableOpacity
+            onPress={() => setQrCodeClicked(true)}
+            style={styles.qrCodeContainer}
+          >
             <QRCode
               value="GBD99763JS-GROOVE-BEATS-DAY-FEST-24092024"
               size={150}
               backgroundColor="transparent"
               color="#000"
             />
-          </View>
+          </TouchableOpacity>
         </View>
 
         {/* Ticket Notches */}
-        <View style={styles.leftNotch} />
-        <View style={styles.rightNotch} />
+        <View
+          style={[
+            styles.leftNotch,
+            {
+              backgroundColor: notchBg,
+            },
+          ]}
+        />
+        <View
+          style={[
+            styles.rightNotch,
+            {
+              backgroundColor: notchBg,
+            },
+          ]}
+        />
       </View>
-    </SafeAreaView>
+    </ThemedView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    padding: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: 20,
   },
   headerTitle: {
     fontSize: 24,
@@ -117,15 +245,22 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: "#f5f5f5",
+
     justifyContent: "center",
     alignItems: "center",
   },
   ticketContainer: {
-    backgroundColor: "#7B8EF7",
+    backgroundColor: "#9f1239",
     borderRadius: 24,
     overflow: "hidden",
     position: "relative",
+    height: "90%",
+  },
+  QRCodeContainer: {
+    borderRadius: 24,
+    overflow: "hidden",
+    justifyContent: "center",
+    alignItems: "center",
   },
   eventImage: {
     width: "100%",
@@ -135,13 +270,13 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   presenter: {
-    fontSize: 18,
+    fontSize: 16,
     color: "white",
     marginBottom: 4,
   },
   eventName: {
     fontSize: 32,
-    fontWeight: "bold",
+    fontWeight: "700",
     color: "white",
     marginBottom: 24,
   },
@@ -153,13 +288,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   detailLabel: {
-    fontSize: 18,
+    fontSize: 17,
     color: "white",
     marginBottom: 4,
   },
   detailValue: {
-    fontSize: 22,
-    fontWeight: "600",
+    fontSize: 20,
+    fontWeight: "700",
+    color: "white",
+  },
+  detailValuePlace: {
+    fontSize: 20,
+    fontWeight: "500",
     color: "white",
   },
   placeContainer: {
@@ -186,7 +326,6 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "white",
   },
   rightNotch: {
     position: "absolute",

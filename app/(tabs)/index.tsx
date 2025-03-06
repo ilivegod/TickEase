@@ -6,12 +6,15 @@ import {
   ScrollView,
   StyleSheet,
   Image,
-  SafeAreaView,
+  Animated,
+  useAnimatedValue,
   StatusBar,
   Dimensions,
   useColorScheme,
   FlatList,
   TextInput,
+  Button,
+  Platform,
 } from "react-native";
 import { router } from "expo-router";
 import { Feather } from "@expo/vector-icons";
@@ -29,7 +32,19 @@ import {
   neutral950,
   slate900,
 } from "../../constants/Colors";
-import { Search } from "lucide-react-native";
+
+import {
+  Search,
+  SlidersHorizontal,
+  SlidersVertical,
+} from "lucide-react-native";
+
+import {
+  Menu,
+  MenuOptions,
+  MenuOption,
+  MenuTrigger,
+} from "react-native-popup-menu";
 
 // Mock data - in real app this would come from an API
 const events = [
@@ -202,6 +217,17 @@ export default function EventsScreen() {
   const [selectedCategory, setSelectedCategory] = useState("All Events");
   const [searchClicked, setSearchClicked] = useState(false);
 
+  const fadeAnim = useAnimatedValue(0);
+
+  const fadeIn = () => {
+    // Will change fadeAnim value to 1 in 5 seconds
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 5000,
+      useNativeDriver: true,
+    }).start();
+  };
+
   const headerBgColor = useThemeColor(
     { light: gray100, dark: neutral950 },
     "background"
@@ -231,12 +257,12 @@ export default function EventsScreen() {
     setSearchClicked(!searchClicked);
   };
 
-  if (searchClicked)
-    return (
-      <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
-        <StatusBar barStyle="dark-content" />
+  return (
+    <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
+      <StatusBar barStyle="dark-content" />
 
-        {/* Header */}
+      {/* Header */}
+      {searchClicked ? (
         <View
           style={[
             styles.header,
@@ -246,131 +272,132 @@ export default function EventsScreen() {
             },
           ]}
         >
-          {/* Search Bar */}
+          <Animated.View>
+            <View style={styles.searchContainer}>
+              <Search size={20} color="gray" style={styles.icon} />
+              <TextInput
+                placeholder="Search events"
+                style={styles.input}
+                placeholderTextColor="#9CA3AF"
+              />
+              {/* <TouchableOpacity>
+                <SlidersHorizontal size={20} color="gray" style={styles.icon} />
+              </TouchableOpacity> */}
+              <Menu>
+                <MenuTrigger onPress={() => {}}>
+                  <SlidersHorizontal
+                    size={20}
+                    color="gray"
+                    style={styles.icon}
+                  />
+                </MenuTrigger>
+                <MenuOptions
+                  customStyles={{
+                    optionsWrapper: {
+                      position: "absolute",
+                      top: 40,
+                      left: 50,
+                      backgroundColor: "white",
+                      borderRadius: 8,
+                      padding: 8,
+                      width: 150,
+                      shadowOpacity: 0.2,
+                      shadowRadius: 4,
+                      elevation: 5,
+                    },
+                  }}
+                >
+                  <Text style={{ paddingLeft: 5, marginBottom: 10 }}>
+                    Sort by...
+                  </Text>
+                  <MenuOption onSelect={() => alert(`Save`)} text="Latest" />
+                  <MenuOption onSelect={() => alert(`Save`)} text="Price" />
+                  <MenuOption onSelect={() => alert(`Save`)} text="Oldest" />
+                </MenuOptions>
+              </Menu>
+            </View>
 
-          <View style={styles.searchContainer}>
-            <Search size={20} color="gray" style={styles.icon} />
-            <TextInput
-              placeholder="Search events"
-              style={styles.input}
-              placeholderTextColor="#9CA3AF"
-            />
-          </View>
-          <TouchableOpacity onPress={() => setSearchClicked(!searchClicked)}>
-            <ThemedText
-              type="desc"
-              style={{
-                textDecorationLine: "underline",
-                fontSize: 16,
-                paddingVertical: 10,
-              }}
-            >
-              Back to Discover
-            </ThemedText>
-          </TouchableOpacity>
-        </View>
-        {/* Events List */}
-
-        <ThemedView style={styles.eventsList}>
-          <FlatList
-            data={events}
-            renderItem={EventCard}
-            keyExtractor={(item) => item.id}
-            ListEmptyComponent={
-              <View
+            <TouchableOpacity onPress={() => setSearchClicked(!searchClicked)}>
+              <ThemedText
+                type="desc"
                 style={{
-                  flex: 1,
-                  justifyContent: "center",
-                  alignItems: "center",
+                  textDecorationLine: "underline",
+                  fontSize: 16,
+                  paddingVertical: 10,
                 }}
               >
-                <Text>No items available</Text>
-              </View>
-            }
-            ItemSeparatorComponent={() => (
-              <View style={{ marginVertical: 7 }} />
-            )}
-            onRefresh={onRefresh}
-            refreshing={refreshing}
-            showsVerticalScrollIndicator={false}
-            initialNumToRender={10}
-            maxToRenderPerBatch={6}
-            windowSize={10}
-            removeClippedSubviews={true}
-          />
-        </ThemedView>
-      </ThemedView>
-    );
-
-  return (
-    <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
-      <StatusBar barStyle="dark-content" />
-
-      {/* Header */}
-      <View
-        style={[
-          styles.header,
-          {
-            backgroundColor: headerBgColor,
-          },
-        ]}
-      >
-        <View style={styles.topSide}>
-          <Image
-            source={require("../../assets/images/jake-nackos-IF9TK5Uy-KI-unsplash.jpg")}
-            style={styles.profileImage}
-          />
-          <TouchableOpacity
-            onPress={handleSearchPress}
-            style={styles.searchButton}
-          >
-            <Feather name="search" size={24} color="black" />
-          </TouchableOpacity>
+                Back to Discover
+              </ThemedText>
+            </TouchableOpacity>
+          </Animated.View>
         </View>
+      ) : (
+        <View
+          style={[
+            styles.header,
+            {
+              backgroundColor: headerBgColor,
+            },
+          ]}
+        >
+          <View style={styles.topSide}>
+            <Image
+              source={require("../../assets/images/jake-nackos-IF9TK5Uy-KI-unsplash.jpg")}
+              style={styles.profileImage}
+            />
+            <TouchableOpacity
+              onPress={handleSearchPress}
+              style={styles.searchButton}
+            >
+              <Feather name="search" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
 
-        <View style={{ gap: 7, marginTop: 10, marginBottom: 15 }}>
-          <ThemedText type="desc">Hi, Junior</ThemedText>
-          <ThemedText style={{ fontSize: 29, letterSpacing: 1.5 }}>
-            Find your next event.
-          </ThemedText>
-        </View>
+          <View style={{ gap: 7, marginTop: 10, marginBottom: 15 }}>
+            <ThemedText type="desc">Hi, Junior</ThemedText>
+            <ThemedText style={{ fontSize: 29, letterSpacing: 1.5 }}>
+              Find your next event.
+            </ThemedText>
+          </View>
 
-        {/* Search Bar */}
-        {/* <TouchableOpacity style={styles.searchBar}>
+          {/* Search Bar */}
+          {/* <TouchableOpacity style={styles.searchBar}>
           <Feather name="search" size={20} color="#666" />
           <Text style={styles.searchText}>Search events...</Text>
           <Feather name="sliders" size={20} color="#666" />
         </TouchableOpacity> */}
 
-        {/* Categories */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.categoriesContainer}
-        >
-          {categories.map((category) => (
-            <TouchableOpacity
-              key={category}
-              onPress={() => setSelectedCategory(category)}
-              style={[
-                styles.categoryButton,
-                selectedCategory === category && {
-                  backgroundColor: pillsSelectedBgColor,
-                },
-              ]}
-            >
-              <Text
+          {/* Categories */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.categoriesContainer}
+          >
+            {categories.map((category) => (
+              <TouchableOpacity
+                key={category}
+                onPress={() => setSelectedCategory(category)}
                 style={[
-                  styles.categoryButtonText,
-                  selectedCategory === category && styles.selectedCategoryText,
+                  styles.categoryButton,
+                  selectedCategory === category && {
+                    backgroundColor: pillsSelectedBgColor,
+                  },
                 ]}
               >
-                {category}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
+                <Text
+                  style={[
+                    styles.categoryButtonText,
+                    selectedCategory === category &&
+                      styles.selectedCategoryText,
+                  ]}
+                >
+                  {category}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+      )}
 
       {/* Events List */}
 
