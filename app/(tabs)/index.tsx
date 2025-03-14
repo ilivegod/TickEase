@@ -22,6 +22,7 @@ import { ThemedText } from "../../components/ThemedText";
 import { ThemedView } from "../../components/ThemedView";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemeColor } from "../../hooks/useThemeColor";
+import { Ionicons } from "@expo/vector-icons";
 import {
   gray100,
   gray200,
@@ -34,6 +35,7 @@ import {
 } from "../../constants/Colors";
 
 import {
+  CircleX,
   Search,
   SlidersHorizontal,
   SlidersVertical,
@@ -120,6 +122,80 @@ const events = [
   },
 ];
 
+const featuredEvents = [
+  {
+    id: "1",
+    title: "Summer Music Festival",
+    date: "Jun 15-17",
+    location: "Central Park",
+    price: "$85.00",
+    image: "https://picsum.photos/id/1035/300/150",
+    category: "event",
+  },
+  {
+    id: "2",
+    title: "Basketball Championship",
+    date: "Jul 22",
+    location: "Sports Arena",
+    price: "$65.00",
+    image: "https://picsum.photos/id/1058/300/150",
+    category: "sport",
+  },
+  {
+    id: "3",
+    title: "MTN FA CUP Championship",
+    date: "Jul 25",
+    location: "Accra Stadium",
+    price: "$25.00",
+    image: "https://picsum.photos/id/1058/300/150",
+    category: "sport",
+  },
+];
+
+const transportOptions = [
+  {
+    id: "1",
+    title: "Trotro Pass",
+    type: "Monthly",
+    price: "$120.00",
+    image: "https://picsum.photos/id/416/100/100",
+  },
+  {
+    id: "2",
+    title: "Bus Ticket",
+    type: "Single Journey",
+    price: "$2.50",
+    image: "https://picsum.photos/id/417/100/100",
+  },
+  {
+    id: "3",
+    title: "Train Ticket",
+    type: "Round Trip",
+    price: "$45.00",
+    image: "https://picsum.photos/id/418/100/100",
+  },
+];
+
+// New data for recommended events based on user preferences
+const recommendedEvents = [
+  {
+    id: "1",
+    title: "Jazz Night Downtown",
+    date: "May 25",
+    location: "Blue Note Club",
+    price: "$35.00",
+    image: "https://picsum.photos/id/1082/300/150",
+  },
+  {
+    id: "2",
+    title: "Modern Art Exhibition",
+    date: "Jun 3-10",
+    location: "Metropolitan Museum",
+    price: "$22.00",
+    image: "https://picsum.photos/id/1068/300/150",
+  },
+];
+
 const categoryColors: Record<string, string> = {
   Music: "#10B981",
   Technology: "#6366f1",
@@ -134,6 +210,91 @@ const categoryTextColors: Record<string, string> = {
   Food: "white",
   Sports: neutral950,
   Art: "#e11d48",
+};
+
+// Animation for promotions
+const scrollX = new Animated.Value(0);
+const promotionOpacity = new Animated.Value(1);
+
+const renderCategoryItem = ({ item }) => (
+  <TouchableOpacity style={styles.categoryItem}>
+    <View style={styles.categoryIconContainer}>
+      <Ionicons name={item.icon} size={24} color="#4A80F0" />
+    </View>
+    <ThemedText style={styles.categoryName}>{item.name}</ThemedText>
+  </TouchableOpacity>
+);
+
+const renderEventCard = ({ item }) => (
+  <TouchableOpacity style={styles.eventCard}>
+    <Image source={{ uri: item.image }} style={styles.eventImage} />
+    <View style={styles.eventDetails}>
+      <ThemedText style={styles.eventTitle}>{item.title}</ThemedText>
+      <ThemedText type="desc" style={styles.eventInfo}>
+        {item.date} • {item.location}
+      </ThemedText>
+      <View style={styles.priceContainer}>
+        <Text style={styles.price}>{item.price}</Text>
+        <TouchableOpacity style={styles.buyButton}>
+          <Text style={styles.buyButtonText}>Buy</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </TouchableOpacity>
+);
+
+// New render function for quick access buttons
+const renderQuickAccessItem = ({ item }) => (
+  <TouchableOpacity
+    style={[styles.quickAccessItem, { backgroundColor: `${item.color}20` }]}
+  >
+    <View style={[styles.quickAccessIcon, { backgroundColor: item.color }]}>
+      <Ionicons name={item.icon} size={20} color="#FFFFFF" />
+    </View>
+    <Text style={styles.quickAccessText}>{item.title}</Text>
+  </TouchableOpacity>
+);
+
+// New render function for promotions
+const renderPromotionCard = ({ item, index }) => {
+  const inputRange = [(index - 1) * width, index * width, (index + 1) * width];
+
+  const scale = scrollX.interpolate({
+    inputRange,
+    outputRange: [0.9, 1, 0.9],
+    extrapolate: "clamp",
+  });
+
+  return (
+    <Animated.View
+      style={[
+        styles.promotionCard,
+        {
+          backgroundColor: item.backgroundColor,
+          transform: [{ scale }],
+          opacity: promotionOpacity,
+        },
+      ]}
+    >
+      <View style={styles.promotionContent}>
+        <View style={styles.promotionIconContainer}>
+          <Ionicons name={item.icon} size={24} color={item.textColor} />
+        </View>
+        <View style={styles.promotionDetails}>
+          <Text style={[styles.promotionTitle, { color: item.textColor }]}>
+            {item.title}
+          </Text>
+          <Text style={styles.promotionDescription}>{item.description}</Text>
+          <Text style={styles.promotionExpiry}>{item.expiryDate}</Text>
+        </View>
+      </View>
+      <TouchableOpacity
+        style={[styles.promotionButton, { backgroundColor: item.textColor }]}
+      >
+        <Text style={styles.promotionButtonText}>View Offer</Text>
+      </TouchableOpacity>
+    </Animated.View>
+  );
 };
 
 const EventCard = ({ item }: { item: any }) => {
@@ -180,13 +341,34 @@ const EventCard = ({ item }: { item: any }) => {
     </TouchableOpacity>
   );
 };
-const categories = [
-  "All Events",
-  "Music",
-  "Sports",
-  "Technology",
-  "Food",
-  "Arts",
+
+const quickAccess = [
+  { id: "4", title: "Event Tickets", icon: "calendar", color: "#9C27B0" },
+  { id: "1", title: "Transport Pass", icon: "bus", color: "#4CAF50" },
+  { id: "2", title: "Movie Tickets", icon: "film", color: "#FF9800" },
+  { id: "3", title: "Sport Tickets", icon: "football", color: "#2196F3" },
+];
+
+// New data for promotions
+const promotions = [
+  {
+    id: "1",
+    title: "Early Bird Special",
+    description: "20% off on all concert tickets",
+    expiryDate: "Expires in 3 days",
+    backgroundColor: "#FFE1E1",
+    textColor: "#FF4D4D",
+    icon: "pricetag",
+  },
+  {
+    id: "2",
+    title: "Weekend Pass",
+    description: "Unlimited transport all weekend",
+    expiryDate: "Expires this Sunday",
+    backgroundColor: "#E1F5FE",
+    textColor: "#0288D1",
+    icon: "time",
+  },
 ];
 
 export default function EventsScreen() {
@@ -194,6 +376,7 @@ export default function EventsScreen() {
   const insets = useSafeAreaInsets();
   const [selectedCategory, setSelectedCategory] = useState("All Events");
   const [searchClicked, setSearchClicked] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [filteredEvents, setFilteredEvents] = useState(events);
 
   const fadeAnim = useAnimatedValue(0);
@@ -221,6 +404,7 @@ export default function EventsScreen() {
     { light: neutral950, dark: "white" },
     "background"
   );
+
   const [refreshing, setRefreshing] = useState(false);
   const [data, setData] = useState(events);
 
@@ -246,142 +430,158 @@ export default function EventsScreen() {
       <StatusBar barStyle="dark-content" />
 
       {/* Header */}
-      {searchClicked ? (
-        <View
-          style={[
-            styles.header,
-            {
-              backgroundColor: headerBgColor,
-              marginBottom: 2,
-            },
-          ]}
-        >
-          <Animated.View>
-            <View style={styles.searchContainer}>
-              <Search size={20} color="gray" style={styles.icon} />
-              <TextInput
-                placeholder="Search events"
-                style={styles.input}
-                placeholderTextColor="#9CA3AF"
-              />
-              {/* <TouchableOpacity>
-                <SlidersHorizontal size={20} color="gray" style={styles.icon} />
-              </TouchableOpacity> */}
-              <Menu>
-                <MenuTrigger onPress={() => {}}>
-                  <SlidersHorizontal
-                    size={20}
-                    color="gray"
-                    style={styles.icon}
-                  />
-                </MenuTrigger>
-                <MenuOptions
-                  customStyles={{
-                    optionsWrapper: {
-                      position: "absolute",
-                      top: 40,
-                      left: 50,
-                      backgroundColor: "white",
-                      borderRadius: 8,
-                      padding: 8,
-                      width: 150,
-                      shadowOpacity: 0.2,
-                      shadowRadius: 4,
-                      elevation: 5,
-                    },
-                  }}
-                >
-                  <Text style={{ paddingLeft: 5, marginBottom: 10 }}>
-                    Sort by...
-                  </Text>
-                  <MenuOption onSelect={() => alert(`Save`)} text="Latest" />
-                  <MenuOption onSelect={() => alert(`Save`)} text="Price" />
-                  <MenuOption onSelect={() => alert(`Save`)} text="Oldest" />
-                </MenuOptions>
-              </Menu>
-            </View>
 
-            <TouchableOpacity onPress={() => setSearchClicked(!searchClicked)}>
-              <ThemedText
-                type="desc"
-                style={{
-                  textDecorationLine: "underline",
-                  fontSize: 16,
-                  paddingVertical: 10,
-                }}
-              >
-                Back to Discover
-              </ThemedText>
-            </TouchableOpacity>
-          </Animated.View>
-        </View>
-      ) : (
-        <View
-          style={[
-            styles.header,
-            {
-              backgroundColor: headerBgColor,
-            },
-          ]}
-        >
-          <View style={styles.topSide}>
+      <View>
+        <View style={styles.header}>
+          <View>
+            <ThemedText style={styles.greeting}>Hello, Junior</ThemedText>
+            <ThemedText type="desc" style={styles.subGreeting}>
+              What tickets do you need today?
+            </ThemedText>
+          </View>
+          <TouchableOpacity style={styles.profileButton}>
             <Image
               source={require("../../assets/images/jake-nackos-IF9TK5Uy-KI-unsplash.jpg")}
               style={styles.profileImage}
             />
-            <TouchableOpacity
-              onPress={handleSearchPress}
-              style={styles.searchButton}
-            >
-              <Feather name="search" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Search Bar */}
+        <View style={styles.searchContainer}>
+          <Feather
+            name="search"
+            size={20}
+            color="#A0A0A0"
+            style={styles.searchIcon}
+          />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search events, transport, tickets..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity onPress={() => setSearchQuery("")}>
+              <CircleX size={20} color="#A0A0A0" />
             </TouchableOpacity>
-          </View>
-
-          <View style={{ gap: 7, marginTop: 10, marginBottom: 15 }}>
-            <ThemedText type="desc">Hi, Junior</ThemedText>
-            <ThemedText style={{ fontSize: 29, letterSpacing: 1.5 }}>
-              Find your next event.
-            </ThemedText>
-          </View>
-
-          {/* Search Bar */}
-          {/* <TouchableOpacity style={styles.searchBar}>
-          <Feather name="search" size={20} color="#666" />
-          <Text style={styles.searchText}>Search events...</Text>
-          <Feather name="sliders" size={20} color="#666" />
-        </TouchableOpacity> */}
-
-          {/* Categories */}
-          <ScrollView
+          )}
+        </View>
+      </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Categories */}
+        {/* <View style={styles.sectionContainer}>
+          <ThemedText style={styles.sectionTitle}>Categories</ThemedText>
+          <FlatList
+            data={categories}
+            renderItem={renderCategoryItem}
+            keyExtractor={(item) => item.id}
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.categoriesContainer}
-          >
-            {categories.map((category) => (
-              <TouchableOpacity
-                key={category}
-                onPress={() => setSelectedCategory(category)}
-                style={[
-                  styles.categoryButton,
-                  selectedCategory === category && {
-                    backgroundColor: pillsSelectedBgColor,
-                  },
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.categoryButtonText,
-                    selectedCategory === category &&
-                      styles.selectedCategoryText,
-                  ]}
-                >
-                  {category}
-                </Text>
+          />
+        </View> */}
+
+        {/* Quick Access Buttons */}
+        <View style={styles.quickAccessContainer}>
+          <FlatList
+            data={quickAccess}
+            renderItem={renderQuickAccessItem}
+            keyExtractor={(item) => item.id}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.quickAccessList}
+          />
+        </View>
+        {/* Promotions Carousel */}
+        <View style={styles.sectionContainer}>
+          <ThemedText style={styles.sectionTitle}>Special Offers</ThemedText>
+          <Animated.FlatList
+            data={promotions}
+            renderItem={renderPromotionCard}
+            keyExtractor={(item) => item.id}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            pagingEnabled
+            snapToInterval={width - 40}
+            decelerationRate="fast"
+            contentContainerStyle={styles.promotionList}
+            onScroll={Animated.event(
+              [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+              { useNativeDriver: true }
+            )}
+          />
+        </View>
+
+        {/* Featured Events */}
+        <View style={styles.sectionContainer}>
+          <ThemedText style={styles.sectionTitle}>Featured Events</ThemedText>
+          <FlatList
+            data={featuredEvents}
+            renderItem={renderEventCard}
+            keyExtractor={(item) => item.id}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          />
+        </View>
+
+        {/* Recommended For You */}
+        <View style={styles.sectionContainer}>
+          <View style={styles.sectionTitleContainer}>
+            <ThemedText style={styles.sectionTitle}>
+              Recommended For You
+            </ThemedText>
+            <TouchableOpacity>
+              <Text style={styles.seeAllText}>See All</Text>
+            </TouchableOpacity>
+          </View>
+          <FlatList
+            data={recommendedEvents}
+            renderItem={renderEventCard}
+            keyExtractor={(item) => item.id}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          />
+        </View>
+
+        {/* Public Transport */}
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Public Transport</Text>
+          <View style={styles.transportGrid}>
+            {transportOptions.map((item) => (
+              <TouchableOpacity key={item.id} style={styles.transportCard}>
+                <Image
+                  source={{ uri: item.image }}
+                  style={styles.transportImage}
+                />
+                <View style={styles.transportDetails}>
+                  <Text style={styles.transportTitle}>{item.title}</Text>
+                  <Text style={styles.transportType}>{item.type}</Text>
+                  <Text style={styles.transportPrice}>{item.price}</Text>
+                </View>
               </TouchableOpacity>
             ))}
-          </ScrollView>
+          </View>
         </View>
-      )}
+
+        {/* Recent Purchases */}
+        <View style={[styles.sectionContainer, { marginBottom: 80 }]}>
+          <Text style={styles.sectionTitle}>Recent Purchases</Text>
+          <TouchableOpacity style={styles.recentPurchase}>
+            <View style={styles.recentPurchaseIcon}>
+              <Ionicons name="subway-outline" size={24} color="#FFF" />
+            </View>
+            <View style={styles.recentPurchaseDetails}>
+              <Text style={styles.recentPurchaseTitle}>Weekly Metro Pass</Text>
+              <Text style={styles.recentPurchaseDate}>
+                Valid until May 21, 2025
+              </Text>
+            </View>
+            <TouchableOpacity style={styles.viewButton}>
+              <Text style={styles.viewButtonText}>View</Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
 
       {/* Events List */}
 
@@ -431,15 +631,58 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    borderWidth: 0.5,
-    borderColor: "#D1D5DB",
-    borderRadius: 15,
-    paddingHorizontal: 10,
-    paddingVertical: 13,
-    backgroundColor: "white",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    marginHorizontal: 20,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    marginBottom: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 2,
+  },
+  searchIcon: {
+    marginRight: 10,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: "#1A1A1A",
+  },
+
+  greeting: {
+    fontSize: 24,
+    fontWeight: "600",
+  },
+  promotionCard: {
+    width: width - 40,
+    marginRight: 15,
+    borderRadius: 16,
+    padding: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 2,
+  },
+  subGreeting: {
+    fontSize: 16,
+
+    marginTop: 4,
+  },
+  profileButton: {
+    padding: 5,
   },
   icon: {
     marginRight: 10,
+  },
+  quickAccessContainer: {
+    marginBottom: 15,
+  },
+  quickAccessList: {
+    paddingHorizontal: 15,
   },
   input: {
     flex: 1,
@@ -447,8 +690,12 @@ const styles = StyleSheet.create({
     color: "#4B5563",
   },
   header: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 15,
   },
   topSide: {
     flexDirection: "row",
@@ -461,6 +708,58 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
+  },
+  promotionContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  promotionIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 15,
+  },
+  sectionTitleContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginHorizontal: 20,
+    marginBottom: 15,
+  },
+  promotionDetails: {
+    flex: 1,
+  },
+  promotionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  promotionDescription: {
+    fontSize: 14,
+    color: "#1A1A1A",
+    marginBottom: 5,
+  },
+  promotionExpiry: {
+    fontSize: 12,
+    color: "#6B7280",
+  },
+  promotionButton: {
+    alignSelf: "flex-start",
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 8,
+  },
+  promotionButtonText: {
+    color: "#FFFFFF",
+    fontWeight: "600",
+    fontSize: 14,
+  },
+  promotionList: {
+    paddingHorizontal: 20,
   },
   searchButton: {
     width: 40,
@@ -507,24 +806,7 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
     flex: 1,
   },
-  eventCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  eventImage: {
-    width: "100%",
-    height: 200,
-    backgroundColor: "#F5F5F5",
-  },
+
   eventContent: {
     padding: 16,
   },
@@ -546,12 +828,7 @@ const styles = StyleSheet.create({
     color: "#666666",
     fontSize: 14,
   },
-  eventTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#1A1A1A",
-    marginBottom: 8,
-  },
+
   eventFooter: {
     flexDirection: "row",
     alignItems: "center",
@@ -561,6 +838,29 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
+  },
+  quickAccessItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(74, 128, 240, 0.1)",
+    marginHorizontal: 5,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+  },
+  quickAccessIcon: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: "#4A80F0",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 8,
+  },
+  quickAccessText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#1A1A1A",
   },
   footerText: {
     color: "#666666",
@@ -690,14 +990,215 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 14,
   },
+
+  navButton: {
+    padding: 12,
+  },
+
+  sectionContainer: {
+    marginBottom: 25,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginHorizontal: 20,
+    marginBottom: 15,
+  },
+  eventCard: {
+    width: 300,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    marginLeft: 20,
+    marginRight: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 2,
+    overflow: "hidden",
+  },
+  eventImage: {
+    width: "100%",
+    height: 150,
+    resizeMode: "cover",
+  },
+  eventDetails: {
+    padding: 15,
+  },
+  eventTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+
+    marginBottom: 5,
+  },
+  eventInfo: {
+    fontSize: 14,
+
+    marginBottom: 10,
+  },
+  priceContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  price: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#4A80F0",
+  },
+  buyButton: {
+    backgroundColor: "#4A80F0",
+    paddingVertical: 6,
+    paddingHorizontal: 15,
+    borderRadius: 8,
+  },
+  buyButtonText: {
+    color: "#FFFFFF",
+    fontWeight: "600",
+    fontSize: 14,
+  },
+  categoryItem: {
+    alignItems: "center",
+    marginLeft: 20,
+    marginRight: 5,
+    width: 80,
+  },
+  categoryIconContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "#EEF2FF",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  categoryName: {
+    fontSize: 14,
+
+    textAlign: "center",
+  },
+  transportGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    paddingHorizontal: 15,
+  },
+  transportCard: {
+    width: "30%",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    margin: 5,
+    padding: 10,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 1,
+  },
+  transportImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginBottom: 8,
+  },
+  transportDetails: {
+    alignItems: "center",
+  },
+  transportTitle: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#1A1A1A",
+    textAlign: "center",
+  },
+  transportType: {
+    fontSize: 12,
+    color: "#6B7280",
+    marginVertical: 2,
+    textAlign: "center",
+  },
+  transportPrice: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#4A80F0",
+    marginTop: 2,
+  },
+  recentPurchase: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    marginHorizontal: 20,
+    padding: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 1,
+  },
+  recentPurchaseIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#4A80F0",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 15,
+  },
+  recentPurchaseDetails: {
+    flex: 1,
+  },
+  recentPurchaseTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#1A1A1A",
+  },
+  recentPurchaseDate: {
+    fontSize: 14,
+    color: "#6B7280",
+    marginTop: 2,
+  },
+  viewButton: {
+    backgroundColor: "#EEF2FF",
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+  },
+  viewButtonText: {
+    color: "#4A80F0",
+    fontWeight: "600",
+    fontSize: 14,
+  },
   bottomNav: {
     flexDirection: "row",
     justifyContent: "space-around",
-    paddingVertical: 12,
-    borderTopWidth: 1,
-    borderTopColor: "#E5E7EB",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
+    paddingVertical: 10,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 5,
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
-  navButton: {
-    padding: 12,
+  navItem: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+  },
+  navText: {
+    fontSize: 12,
+    marginTop: 4,
+    color: "#A0A0A0",
+  },
+  activeNavText: {
+    color: "#4A80F0",
+    fontWeight: "500",
   },
 });
