@@ -13,8 +13,6 @@ import {
   useColorScheme,
   FlatList,
   TextInput,
-  Button,
-  Platform,
 } from "react-native";
 import { router } from "expo-router";
 import { Feather } from "@expo/vector-icons";
@@ -23,178 +21,18 @@ import { ThemedView } from "../../components/ThemedView";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemeColor } from "../../hooks/useThemeColor";
 import { Ionicons } from "@expo/vector-icons";
+import { gray100, gray400, neutral950, slate900 } from "../../constants/Colors";
+import { CircleX } from "lucide-react-native";
+import EventCard from "./components/eventsCard";
 import {
-  gray100,
-  gray200,
-  gray400,
-  lightBgColor,
-  neutral800,
-  neutral900,
-  neutral950,
-  slate900,
-} from "../../constants/Colors";
-
-import {
-  CircleX,
-  Search,
-  SlidersHorizontal,
-  SlidersVertical,
-} from "lucide-react-native";
-
-import {
-  Menu,
-  MenuOptions,
-  MenuOption,
-  MenuTrigger,
-} from "react-native-popup-menu";
-
-// Mock data - in real app this would come from an API
-const events = [
-  {
-    id: "1",
-    title: "Summer Music Festival",
-    date: "15",
-    month: "Aug",
-    location: "Accra",
-    subLocation: "Garage night club",
-    organizer: "Rock Waves Production",
-
-    category: "Music",
-  },
-  {
-    id: "2",
-    title: "Tech Conference 2024",
-    date: "20",
-    month: "Sept",
-
-    location: "Accra",
-    subLocation: "Garage night club",
-    organizer: "Viewer Arts Group",
-
-    category: "Technology",
-  },
-  {
-    id: "3",
-    title: "Food & Wine Festival",
-    date: "5",
-    month: "Oct",
-
-    location: "Accra",
-    subLocation: "Garage night club",
-    organizer: "BET",
-    category: "Food",
-    image: "https://your-image-url.com/3",
-  },
-  {
-    id: "4",
-    title: "Summer Music Festival",
-    date: "15",
-    month: "Aug",
-    location: "Accra",
-    subLocation: "Garage night club",
-    organizer: "Rock Waves Production",
-
-    category: "Music",
-  },
-  {
-    id: "5",
-    title: "Tech Conference 2024",
-    date: "20",
-    month: "Sept",
-
-    location: "Accra",
-    subLocation: "Garage night club",
-    organizer: "Viewer Arts Group",
-
-    category: "Technology",
-  },
-  {
-    id: "6",
-    title: "Food & Wine Festival",
-    date: "5",
-    month: "Oct",
-
-    location: "Accra",
-    subLocation: "Garage night club",
-    organizer: "BET",
-    category: "Food",
-    image: "https://your-image-url.com/3",
-  },
-];
-
-const featuredEvents = [
-  {
-    id: "1",
-    title: "Summer Music Festival",
-    date: "Jun 15-17",
-    location: "Central Park",
-    price: "$85.00",
-    image: "https://picsum.photos/id/1035/300/150",
-    category: "event",
-  },
-  {
-    id: "2",
-    title: "Basketball Championship",
-    date: "Jul 22",
-    location: "Sports Arena",
-    price: "$65.00",
-    image: "https://picsum.photos/id/1058/300/150",
-    category: "sport",
-  },
-  {
-    id: "3",
-    title: "MTN FA CUP Championship",
-    date: "Jul 25",
-    location: "Accra Stadium",
-    price: "$25.00",
-    image: "https://picsum.photos/id/1058/300/150",
-    category: "sport",
-  },
-];
-
-const transportOptions = [
-  {
-    id: "1",
-    title: "Trotro Pass",
-    type: "Monthly",
-    price: "$120.00",
-    image: "https://picsum.photos/id/416/100/100",
-  },
-  {
-    id: "2",
-    title: "Bus Ticket",
-    type: "Single Journey",
-    price: "$2.50",
-    image: "https://picsum.photos/id/417/100/100",
-  },
-  {
-    id: "3",
-    title: "Train Ticket",
-    type: "Round Trip",
-    price: "$45.00",
-    image: "https://picsum.photos/id/418/100/100",
-  },
-];
-
-// New data for recommended events based on user preferences
-const recommendedEvents = [
-  {
-    id: "1",
-    title: "Jazz Night Downtown",
-    date: "May 25",
-    location: "Blue Note Club",
-    price: "$35.00",
-    image: "https://picsum.photos/id/1082/300/150",
-  },
-  {
-    id: "2",
-    title: "Modern Art Exhibition",
-    date: "Jun 3-10",
-    location: "Metropolitan Museum",
-    price: "$22.00",
-    image: "https://picsum.photos/id/1068/300/150",
-  },
-];
+  events,
+  featuredEvents,
+  promotions,
+  quickAccess,
+  recommendedEvents,
+  transportOptions,
+} from "./mockData/mockData";
+import RenderPromotionCard from "./components/promotionCard";
 
 const categoryColors: Record<string, string> = {
   Music: "#10B981",
@@ -216,15 +54,7 @@ const categoryTextColors: Record<string, string> = {
 const scrollX = new Animated.Value(0);
 const promotionOpacity = new Animated.Value(1);
 
-const renderCategoryItem = ({ item }) => (
-  <TouchableOpacity style={styles.categoryItem}>
-    <View style={styles.categoryIconContainer}>
-      <Ionicons name={item.icon} size={24} color="#4A80F0" />
-    </View>
-    <ThemedText style={styles.categoryName}>{item.name}</ThemedText>
-  </TouchableOpacity>
-);
-
+// card component for featured and recommended events
 const renderEventCard = ({ item }) => (
   <TouchableOpacity style={styles.eventCard}>
     <Image source={{ uri: item.image }} style={styles.eventImage} />
@@ -243,7 +73,7 @@ const renderEventCard = ({ item }) => (
   </TouchableOpacity>
 );
 
-// New render function for quick access buttons
+// component function for quick access buttons
 const renderQuickAccessItem = ({ item }) => (
   <TouchableOpacity
     style={[styles.quickAccessItem, { backgroundColor: `${item.color}20` }]}
@@ -255,140 +85,12 @@ const renderQuickAccessItem = ({ item }) => (
   </TouchableOpacity>
 );
 
-// New render function for promotions
-const renderPromotionCard = ({ item, index }) => {
-  const inputRange = [(index - 1) * width, index * width, (index + 1) * width];
-
-  const scale = scrollX.interpolate({
-    inputRange,
-    outputRange: [0.9, 1, 0.9],
-    extrapolate: "clamp",
-  });
-
-  return (
-    <Animated.View
-      style={[
-        styles.promotionCard,
-        {
-          backgroundColor: item.backgroundColor,
-          transform: [{ scale }],
-          opacity: promotionOpacity,
-        },
-      ]}
-    >
-      <View style={styles.promotionContent}>
-        <View style={styles.promotionIconContainer}>
-          <Ionicons name={item.icon} size={24} color={item.textColor} />
-        </View>
-        <View style={styles.promotionDetails}>
-          <Text style={[styles.promotionTitle, { color: item.textColor }]}>
-            {item.title}
-          </Text>
-          <Text style={styles.promotionDescription}>{item.description}</Text>
-          <Text style={styles.promotionExpiry}>{item.expiryDate}</Text>
-        </View>
-      </View>
-      <TouchableOpacity
-        style={[styles.promotionButton, { backgroundColor: item.textColor }]}
-      >
-        <Text style={styles.promotionButtonText}>View Offer</Text>
-      </TouchableOpacity>
-    </Animated.View>
-  );
-};
-
-const EventCard = ({ item }: { item: any }) => {
-  const backgroundColor =
-    categoryColors[item.category] || categoryColors["Music"];
-
-  const color =
-    categoryTextColors[item.category] || categoryTextColors["Music"];
-
-  return (
-    <TouchableOpacity
-      key={item.id}
-      style={[styles.card, { backgroundColor }]}
-      onPress={() =>
-        router.push({
-          pathname: "/(details)/events/[id]",
-          params: { id: item.id },
-        })
-      }
-    >
-      <View style={styles.cardHeader}>
-        <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
-          <View style={styles.dateBadge}>
-            <Text style={[styles.dateText]}>{item.date}</Text>
-            <Text style={styles.monthText}>{item.month}</Text>
-          </View>
-          <View>
-            <Text style={[styles.cardLocation, { color }]}>
-              {item.location}
-            </Text>
-            <Text style={[styles.cardLocation, { color }]}>
-              {item.subLocation}
-            </Text>
-          </View>
-        </View>
-        <View>
-          <Text style={{ color, fontWeight: "700" }}>{item.category}</Text>
-        </View>
-      </View>
-      <View style={styles.cardContent}>
-        <Text style={[styles.cardOrganizer, { color }]}>{item.organizer}</Text>
-        <Text style={[styles.cardTitle, { color }]}>{item.title}</Text>
-      </View>
-    </TouchableOpacity>
-  );
-};
-
-const quickAccess = [
-  { id: "4", title: "Event Tickets", icon: "calendar", color: "#9C27B0" },
-  { id: "1", title: "Transport Pass", icon: "bus", color: "#4CAF50" },
-  { id: "2", title: "Movie Tickets", icon: "film", color: "#FF9800" },
-  { id: "3", title: "Sport Tickets", icon: "football", color: "#2196F3" },
-];
-
-// New data for promotions
-const promotions = [
-  {
-    id: "1",
-    title: "Early Bird Special",
-    description: "20% off on all concert tickets",
-    expiryDate: "Expires in 3 days",
-    backgroundColor: "#FFE1E1",
-    textColor: "#FF4D4D",
-    icon: "pricetag",
-  },
-  {
-    id: "2",
-    title: "Weekend Pass",
-    description: "Unlimited transport all weekend",
-    expiryDate: "Expires this Sunday",
-    backgroundColor: "#E1F5FE",
-    textColor: "#0288D1",
-    icon: "time",
-  },
-];
-
 export default function EventsScreen() {
   const colorScheme = useColorScheme();
   const insets = useSafeAreaInsets();
-  const [selectedCategory, setSelectedCategory] = useState("All Events");
-  const [searchClicked, setSearchClicked] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredEvents, setFilteredEvents] = useState(events);
-
-  const fadeAnim = useAnimatedValue(0);
-
-  const fadeIn = () => {
-    // Will change fadeAnim value to 1 in 5 seconds
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 5000,
-      useNativeDriver: true,
-    }).start();
-  };
+  const [refreshing, setRefreshing] = useState(false);
+  const [data, setData] = useState(events);
 
   const headerBgColor = useThemeColor(
     { light: gray100, dark: neutral950 },
@@ -405,8 +107,20 @@ export default function EventsScreen() {
     "background"
   );
 
-  const [refreshing, setRefreshing] = useState(false);
-  const [data, setData] = useState(events);
+  const fadeAnim = useAnimatedValue(0);
+
+  const handlePressBuy = () => {
+    console.log("handlePressBuy");
+  };
+
+  const fadeIn = () => {
+    // Will change fadeAnim value to 1 in 5 seconds
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 5000,
+      useNativeDriver: true,
+    }).start();
+  };
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -416,21 +130,11 @@ export default function EventsScreen() {
     }, 1500);
   };
 
-  const handleSearchPress = () => {
-    setSearchClicked(!searchClicked);
-  };
-
-  const filteredCategories = events.filter((category) => {
-    if (category.category === "Music") {
-    }
-  });
-
   return (
     <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar barStyle="dark-content" />
 
       {/* Header */}
-
       <View>
         <View style={styles.header}>
           <View>
@@ -469,18 +173,6 @@ export default function EventsScreen() {
         </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Categories */}
-        {/* <View style={styles.sectionContainer}>
-          <ThemedText style={styles.sectionTitle}>Categories</ThemedText>
-          <FlatList
-            data={categories}
-            renderItem={renderCategoryItem}
-            keyExtractor={(item) => item.id}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          />
-        </View> */}
-
         {/* Quick Access Buttons */}
         <View style={styles.quickAccessContainer}>
           <FlatList
@@ -497,7 +189,7 @@ export default function EventsScreen() {
           <ThemedText style={styles.sectionTitle}>Special Offers</ThemedText>
           <Animated.FlatList
             data={promotions}
-            renderItem={renderPromotionCard}
+            renderItem={RenderPromotionCard}
             keyExtractor={(item) => item.id}
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -514,7 +206,12 @@ export default function EventsScreen() {
 
         {/* Featured Events */}
         <View style={styles.sectionContainer}>
-          <ThemedText style={styles.sectionTitle}>Featured Events</ThemedText>
+          <View style={styles.sectionTitleContainer}>
+            <ThemedText style={styles.sectionTitle}>Featured Events</ThemedText>
+            <TouchableOpacity>
+              <Text style={styles.seeAllText}>See All</Text>
+            </TouchableOpacity>
+          </View>
           <FlatList
             data={featuredEvents}
             renderItem={renderEventCard}
@@ -727,8 +424,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginHorizontal: 20,
-    marginBottom: 15,
+    marginRight: 20,
   },
   promotionDetails: {
     flex: 1,
@@ -1167,38 +863,5 @@ const styles = StyleSheet.create({
     color: "#4A80F0",
     fontWeight: "600",
     fontSize: 14,
-  },
-  bottomNav: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    backgroundColor: "#FFFFFF",
-    paddingVertical: 10,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 5,
-    elevation: 5,
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-  },
-  navItem: {
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-  },
-  navText: {
-    fontSize: 12,
-    marginTop: 4,
-    color: "#A0A0A0",
-  },
-  activeNavText: {
-    color: "#4A80F0",
-    fontWeight: "500",
   },
 });
