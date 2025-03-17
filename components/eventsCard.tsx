@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { router } from "expo-router";
-import { gray400, neutral950, slate900 } from "../../../constants/Colors";
+import { gray400, neutral950, slate900 } from "../constants/Colors";
 
 const EventCard = ({ item }: { item: any }) => {
   const categoryColors: Record<string, string> = {

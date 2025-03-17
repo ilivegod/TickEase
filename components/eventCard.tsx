@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import React from "react";
-import { ThemedText } from "../../../components/ThemedText";
+import { ThemedText } from "./ThemedText";
 
 const RenderEventCard = ({ item }) => {
   return (

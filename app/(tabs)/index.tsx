@@ -23,7 +23,7 @@ import { useThemeColor } from "../../hooks/useThemeColor";
 import { Ionicons } from "@expo/vector-icons";
 import { gray100, gray400, neutral950, slate900 } from "../../constants/Colors";
 import { CircleX } from "lucide-react-native";
-import EventCard from "./components/eventsCard";
+import EventCard from "../../components/eventsCard";
 import {
   events,
   featuredEvents,
@@ -32,7 +32,7 @@ import {
   recommendedEvents,
   transportOptions,
 } from "./mockData/mockData";
-import RenderPromotionCard from "./components/promotionCard";
+import RenderPromotionCard from "../../components/promotionCard";
 
 const categoryColors: Record<string, string> = {
   Music: "#10B981",
