@@ -173,7 +173,7 @@ const SettingsScreen = () => {
         <SettingItem
           icon="bug-outline"
           title="Report an Issue"
-          onPress={() => console.log("Report pressed")}
+          onPress={() => router.push("(details)/report-issue")}
         />
 
         <SectionHeader title="ABOUT" />

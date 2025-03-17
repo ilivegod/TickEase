@@ -9,6 +9,7 @@ export default function Layout() {
       <Stack.Screen name="singleTicket" />
       <Stack.Screen name="ticketsSelection" />
       <Stack.Screen name="about-app" />
+      <Stack.Screen name="report-issue" />
     </Stack>
   );
 }

@@ -13,6 +13,7 @@ import {
   Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 const ReportIssueScreen = ({ navigation }) => {
   // State for form fields
@@ -136,7 +137,7 @@ const ReportIssueScreen = ({ navigation }) => {
           <View style={styles.header}>
             <TouchableOpacity
               style={styles.backButton}
-              onPress={() => navigation.goBack()}
+              onPress={() => router.back()}
             >
               <Ionicons name="chevron-back" size={24} color="#007AFF" />
               <Text style={styles.backButtonText}>Settings</Text>
