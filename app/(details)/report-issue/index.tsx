@@ -14,6 +14,8 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { ThemedView } from "../../../components/ThemedView";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const ReportIssueScreen = ({ navigation }) => {
   // State for form fields
@@ -33,6 +35,8 @@ const ReportIssueScreen = ({ navigation }) => {
     { id: "suggestion", label: "Feature Request", icon: "bulb-outline" },
     { id: "other", label: "Other", icon: "ellipsis-horizontal-outline" },
   ];
+
+  const insets = useSafeAreaInsets();
 
   // Function to simulate report submission
   const submitReport = () => {
@@ -127,7 +131,7 @@ const ReportIssueScreen = ({ navigation }) => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardAvoidingView}
@@ -232,14 +236,13 @@ const ReportIssueScreen = ({ navigation }) => {
           </Text>
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </ThemedView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F2F2F7",
   },
   keyboardAvoidingView: {
     flex: 1,
