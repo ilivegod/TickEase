@@ -129,47 +129,15 @@ const SettingsScreen = () => {
           onPress={() => console.log("Payment methods pressed")}
         />
 
-        {/* <SectionHeader title="APP PREFERENCES" />
-        <SettingItem
-          icon="language-outline"
-          title="Language"
-          onPress={() => console.log("Language pressed")}
-        />
-        <SettingItem
-          icon="cash-outline"
-          title="Currency"
-          onPress={() => console.log("Currency pressed")}
-        /> */}
-
         <SectionHeader title="PRIVACY & SECURITY" />
         <SettingItem
           icon="shield-checkmark-outline"
           title="Privacy Policy"
           onPress={() => console.log("Privacy pressed")}
         />
-        {/* <SettingItem
-          icon="document-text-outline"
-          title="Terms of Service"
-          onPress={() => console.log("Terms pressed")}
-        />
-        <ToggleItem
-          icon="finger-print-outline"
-          title="Biometric Authentication"
-          value={biometricAuth}
-          onValueChange={setBiometricAuth}
-        /> */}
 
         <SectionHeader title="SUPPORT" />
-        <SettingItem
-          icon="help-circle-outline"
-          title="Help Center"
-          onPress={() => console.log("Help pressed")}
-        />
-        {/* <SettingItem
-          icon="chatbubble-outline"
-          title="Contact Support"
-          onPress={() => console.log("Support pressed")}
-        /> */}
+
         <SettingItem
           icon="bug-outline"
           title="Report an Issue"
@@ -247,7 +215,7 @@ const styles = StyleSheet.create({
     marginVertical: 15,
   },
   button: {
-    backgroundColor: "#f44336", // Red color for logout
+    backgroundColor: "#f44336",
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,

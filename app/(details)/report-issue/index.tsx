@@ -16,6 +16,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { ThemedView } from "../../../components/ThemedView";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ThemedText } from "../../../components/ThemedText";
+import {
+  gray100,
+  gray400,
+  neutral800,
+  neutral900,
+} from "../../../constants/Colors";
+import { useThemeColor } from "../../../hooks/useThemeColor";
 
 const ReportIssueScreen = ({ navigation }) => {
   // State for form fields
@@ -37,6 +45,41 @@ const ReportIssueScreen = ({ navigation }) => {
   ];
 
   const insets = useSafeAreaInsets();
+
+  const buttonColorBg = useThemeColor(
+    { light: neutral800, dark: gray100 },
+    "background"
+  );
+
+  const buttonBg = useThemeColor(
+    { light: gray100, dark: neutral900 },
+    "background"
+  );
+
+  const iconColorLight = useThemeColor(
+    { light: neutral800, dark: "white" },
+    "background"
+  );
+
+  const buttonTextColor = useThemeColor(
+    { light: "#333333", dark: gray100 },
+    "background"
+  );
+
+  const buttonSelectedTextColor = useThemeColor(
+    { light: gray100, dark: "#333333" },
+    "background"
+  );
+
+  const iconColorDark = useThemeColor(
+    { light: "white", dark: neutral800 },
+    "background"
+  );
+
+  const textInputBorderColor = useThemeColor(
+    { light: "gray", dark: gray400 },
+    "background"
+  );
 
   // Function to simulate report submission
   const submitReport = () => {
@@ -85,19 +128,24 @@ const ReportIssueScreen = ({ navigation }) => {
     <TouchableOpacity
       style={[
         styles.issueTypeButton,
-        selected && styles.issueTypeButtonSelected,
+        { backgroundColor: buttonBg },
+        selected && {
+          backgroundColor: buttonColorBg,
+          borderColor: buttonColorBg,
+        },
       ]}
       onPress={() => onPress(type.id)}
     >
       <Ionicons
         name={type.icon}
         size={24}
-        color={selected ? "#FFFFFF" : "#007AFF"}
+        color={selected ? iconColorDark : iconColorLight}
       />
       <Text
         style={[
           styles.issueTypeLabel,
-          selected && styles.issueTypeLabelSelected,
+          { color: buttonTextColor },
+          selected && { color: buttonSelectedTextColor },
         ]}
       >
         {type.label}
@@ -131,7 +179,10 @@ const ReportIssueScreen = ({ navigation }) => {
   );
 
   return (
-    <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
+    <ThemedView
+      darkColor={neutral900}
+      style={[styles.container, { paddingTop: insets.top }]}
+    >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardAvoidingView}
@@ -142,26 +193,27 @@ const ReportIssueScreen = ({ navigation }) => {
             <TouchableOpacity
               style={styles.backButton}
               onPress={() => router.back()}
+              accessible={true}
+              accessibilityLabel="Go back"
             >
-              <Ionicons name="chevron-back" size={24} color="#007AFF" />
-              <Text style={styles.backButtonText}>Settings</Text>
+              <Ionicons name="chevron-back" size={24} color="white" />
             </TouchableOpacity>
-            <Text style={styles.screenTitle}>Report an Issue</Text>
+            <ThemedText style={styles.screenTitle}>Report an Issue</ThemedText>
           </View>
 
           {/* Instructions */}
-          <View style={styles.instructionContainer}>
-            <Text style={styles.instructionText}>
+          <ThemedView lightColor="white" style={styles.instructionContainer}>
+            <ThemedText type="desc" style={styles.instructionText}>
               Please provide details about the issue you're experiencing. This
               will help us fix the problem quickly.
-            </Text>
-          </View>
+            </ThemedText>
+          </ThemedView>
 
           {/* Issue Type Selection */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
+          <ThemedView lightColor="white" style={styles.section}>
+            <ThemedText style={styles.sectionTitle}>
               What type of issue are you experiencing?
-            </Text>
+            </ThemedText>
             <View style={styles.issueTypeContainer}>
               {issueTypes.map((type) => (
                 <IssueTypeButton
@@ -172,13 +224,18 @@ const ReportIssueScreen = ({ navigation }) => {
                 />
               ))}
             </View>
-          </View>
+          </ThemedView>
 
           {/* Description */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Describe the issue</Text>
+            <ThemedText style={styles.sectionTitle}>
+              Describe the issue
+            </ThemedText>
             <TextInput
-              style={styles.descriptionInput}
+              style={[
+                styles.descriptionInput,
+                { borderColor: textInputBorderColor },
+              ]}
               placeholder="Please provide as much detail as possible..."
               value={description}
               onChangeText={setDescription}
@@ -190,29 +247,16 @@ const ReportIssueScreen = ({ navigation }) => {
 
           {/* Contact Email */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Your email address</Text>
+            <ThemedText style={styles.sectionTitle}>
+              Your email address
+            </ThemedText>
             <TextInput
-              style={styles.emailInput}
+              style={[styles.emailInput, { borderColor: textInputBorderColor }]}
               placeholder="email@example.com"
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
               autoCapitalize="none"
-            />
-          </View>
-
-          {/* Additional Information */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Additional Information</Text>
-            <ToggleOption
-              label="Include screenshot of current screen"
-              value={includeScreenshot}
-              onToggle={setIncludeScreenshot}
-            />
-            <ToggleOption
-              label="Include device & app information"
-              value={includeDeviceInfo}
-              onToggle={setIncludeDeviceInfo}
             />
           </View>
 
@@ -257,11 +301,15 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#E0E0E0",
-    backgroundColor: "#FFFFFF",
   },
   backButton: {
-    flexDirection: "row",
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(154, 154, 154, 0.3)",
     alignItems: "center",
+    justifyContent: "center",
+    padding: 8,
   },
   backButtonText: {
     color: "#007AFF",
@@ -270,30 +318,27 @@ const styles = StyleSheet.create({
   screenTitle: {
     flex: 1,
     textAlign: "center",
-    fontSize: 17,
+    fontSize: 22,
     fontWeight: "600",
     marginRight: 40, // To center the title
   },
   instructionContainer: {
     padding: 16,
-    backgroundColor: "#FFFFFF",
-    marginBottom: 16,
+
+    marginBottom: 12,
   },
   instructionText: {
     fontSize: 15,
-    color: "#666666",
     lineHeight: 20,
   },
   section: {
-    marginBottom: 16,
+    marginBottom: 0,
     padding: 16,
-    backgroundColor: "#FFFFFF",
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: "600",
     marginBottom: 12,
-    color: "#333333",
   },
   issueTypeContainer: {
     flexDirection: "row",
@@ -302,43 +347,36 @@ const styles = StyleSheet.create({
   },
   issueTypeButton: {
     width: "48%",
-    padding: 12,
+    padding: 14,
     borderRadius: 8,
-    backgroundColor: "#F0F0F0",
+
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 10,
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
   },
-  issueTypeButtonSelected: {
-    backgroundColor: "#007AFF",
-    borderColor: "#007AFF",
-  },
+  // issueTypeButtonSelected: {
+  //   backgroundColor: iconColor,
+  //   borderColor: neutral800,
+  // },
   issueTypeLabel: {
     marginLeft: 8,
     fontSize: 14,
-    color: "#333333",
   },
-  issueTypeLabelSelected: {
-    color: "#FFFFFF",
-  },
+
   descriptionInput: {
     borderWidth: 1,
-    borderColor: "#E0E0E0",
+
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    backgroundColor: "#F9F9F9",
     minHeight: 120,
   },
   emailInput: {
     borderWidth: 1,
-    borderColor: "#E0E0E0",
+
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    backgroundColor: "#F9F9F9",
   },
   toggleOption: {
     flexDirection: "row",
@@ -381,7 +419,8 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 8,
     marginHorizontal: 16,
-    marginVertical: 20,
+    marginTop: 30,
+    marginBottom: 20,
     alignItems: "center",
   },
   submitButtonText: {

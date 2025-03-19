@@ -17,6 +17,7 @@ import { slate900 } from "../../../constants/Colors";
 import { ThemedText } from "../../../components/ThemedText";
 import { router } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
+import { useThemeColor } from "../../../hooks/useThemeColor";
 
 const AboutAppScreen = ({ navigation }) => {
   const inset = useSafeAreaInsets();
@@ -61,6 +62,11 @@ const AboutAppScreen = ({ navigation }) => {
     }
   };
 
+  const iconColor = useThemeColor(
+    { light: "black", dark: "white" },
+    "background"
+  );
+
   // Helper function for section headers
   const SectionHeader = ({ title }) => (
     <ThemedView style={styles.sectionHeader}>
@@ -76,7 +82,7 @@ const AboutAppScreen = ({ navigation }) => {
       <Ionicons
         name="checkmark-circle"
         size={18}
-        color="#007AFF"
+        color={iconColor}
         style={styles.listIcon}
       />
       <ThemedText style={styles.listText}>{text}</ThemedText>
