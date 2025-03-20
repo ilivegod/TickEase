@@ -10,6 +10,8 @@ export default function Layout() {
       <Stack.Screen name="ticketsSelection" />
       <Stack.Screen name="about-app" />
       <Stack.Screen name="report-issue" />
+      <Stack.Screen name="privacy-policy" />
+      <Stack.Screen name="change-password" />
     </Stack>
   );
 }

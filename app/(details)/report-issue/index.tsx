@@ -26,12 +26,9 @@ import {
 import { useThemeColor } from "../../../hooks/useThemeColor";
 
 const ReportIssueScreen = ({ navigation }) => {
-  // State for form fields
   const [issueType, setIssueType] = useState("");
   const [description, setDescription] = useState("");
   const [email, setEmail] = useState("");
-  const [includeScreenshot, setIncludeScreenshot] = useState(true);
-  const [includeDeviceInfo, setIncludeDeviceInfo] = useState(true);
   const [loading, setLoading] = useState(false);
 
   // Issue type options
@@ -39,8 +36,6 @@ const ReportIssueScreen = ({ navigation }) => {
     { id: "bug", label: "App Bug/Crash", icon: "bug-outline" },
     { id: "purchase", label: "Purchase Problem", icon: "card-outline" },
     { id: "account", label: "Account Issue", icon: "person-outline" },
-    { id: "tickets", label: "Ticket Access", icon: "ticket-outline" },
-    { id: "suggestion", label: "Feature Request", icon: "bulb-outline" },
     { id: "other", label: "Other", icon: "ellipsis-horizontal-outline" },
   ];
 
@@ -56,6 +51,7 @@ const ReportIssueScreen = ({ navigation }) => {
     "background"
   );
 
+  // dark/light mode helpers
   const iconColorLight = useThemeColor(
     { light: neutral800, dark: "white" },
     "background"
@@ -81,7 +77,7 @@ const ReportIssueScreen = ({ navigation }) => {
     "background"
   );
 
-  // Function to simulate report submission
+  // Function for submission
   const submitReport = () => {
     // Validate inputs
     if (!issueType) {
@@ -150,31 +146,6 @@ const ReportIssueScreen = ({ navigation }) => {
       >
         {type.label}
       </Text>
-    </TouchableOpacity>
-  );
-
-  // Helper component for toggle options
-  const ToggleOption = ({ label, value, onToggle }) => (
-    <TouchableOpacity
-      style={styles.toggleOption}
-      onPress={() => onToggle(!value)}
-    >
-      <Text style={styles.toggleLabel}>{label}</Text>
-      <View
-        style={[
-          styles.toggleButton,
-          value ? styles.toggleButtonActive : styles.toggleButtonInactive,
-        ]}
-      >
-        <View
-          style={[
-            styles.toggleIndicator,
-            value
-              ? styles.toggleIndicatorActive
-              : styles.toggleIndicatorInactive,
-          ]}
-        />
-      </View>
     </TouchableOpacity>
   );
 

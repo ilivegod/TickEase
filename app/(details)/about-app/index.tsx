@@ -19,7 +19,7 @@ import { router } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
 import { useThemeColor } from "../../../hooks/useThemeColor";
 
-const AboutAppScreen = ({ navigation }) => {
+const AboutAppScreen = () => {
   const inset = useSafeAreaInsets();
   // App information
   const appInfo = {
@@ -111,7 +111,9 @@ const AboutAppScreen = ({ navigation }) => {
           accessible={true}
           accessibilityLabel="Go back"
         >
-          <ChevronLeft color="white" size={24} />
+          <View style={styles.backButton}>
+            <ChevronLeft color={iconColor} size={24} />
+          </View>
         </TouchableOpacity>
       </View>
 
@@ -185,27 +187,22 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
+    flexDirection: "column",
     alignItems: "center",
-    paddingVertical: 30,
+    paddingVertical: 20,
   },
   backHeader: {
+    paddingLeft: 15,
     flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    justifyContent: "center",
-    position: "absolute",
-    top: 80,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E0E0E0",
   },
   backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "rgba(154, 154, 154, 0.3)",
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    position: "absolute",
-    left: 16,
-    zIndex: 1,
-    padding: 8,
   },
   headerTitle: {
     fontSize: 24,
@@ -284,7 +281,9 @@ const styles = StyleSheet.create({
   listText: {
     fontSize: 17,
   },
-
+  placeholder: {
+    width: 60, // To balance the header
+  },
   footer: {
     padding: 20,
     alignItems: "center",

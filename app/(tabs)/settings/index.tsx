@@ -111,7 +111,7 @@ const SettingsScreen = () => {
         <SettingItem
           icon="key-outline"
           title="Change Password"
-          onPress={() => console.log("Password pressed")}
+          onPress={() => router.push("(details)/change-password")}
         />
 
         <SectionHeader title="NOTIFICATIONS" />
@@ -122,18 +122,18 @@ const SettingsScreen = () => {
           onValueChange={setPushNotifications}
         />
 
-        <SectionHeader title="PAYMENT" />
+        {/* <SectionHeader title="PAYMENT" />
         <SettingItem
           icon="card-outline"
           title="Payment Methods"
           onPress={() => console.log("Payment methods pressed")}
-        />
+        /> */}
 
         <SectionHeader title="PRIVACY & SECURITY" />
         <SettingItem
           icon="shield-checkmark-outline"
           title="Privacy Policy"
-          onPress={() => console.log("Privacy pressed")}
+          onPress={() => router.push("(details)/privacy-policy")}
         />
 
         <SectionHeader title="SUPPORT" />
