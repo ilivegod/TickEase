@@ -106,7 +106,7 @@ const SettingsScreen = () => {
         <SettingItem
           icon="person-outline"
           title="Profile Information"
-          onPress={() => console.log("Profile pressed")}
+          onPress={() => router.push("(details)/profile-info")}
         />
         <SettingItem
           icon="key-outline"

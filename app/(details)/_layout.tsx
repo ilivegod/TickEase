@@ -12,6 +12,7 @@ export default function Layout() {
       <Stack.Screen name="report-issue" />
       <Stack.Screen name="privacy-policy" />
       <Stack.Screen name="change-password" />
+      <Stack.Screen name="profile-info" />
     </Stack>
   );
 }

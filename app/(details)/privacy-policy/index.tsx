@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    justifyContent: "space-between",
+
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 10,
@@ -194,7 +194,6 @@ const styles = StyleSheet.create({
   },
   backButton: {
     flexDirection: "row",
-    alignItems: "center",
   },
   backButtonText: {
     color: "#007AFF",

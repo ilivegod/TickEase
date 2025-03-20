@@ -77,6 +77,11 @@ const ReportIssueScreen = ({ navigation }) => {
     "background"
   );
 
+  const iconColor = useThemeColor(
+    { light: "black", dark: "white" },
+    "background"
+  );
+
   // Function for submission
   const submitReport = () => {
     // Validate inputs
@@ -167,7 +172,7 @@ const ReportIssueScreen = ({ navigation }) => {
               accessible={true}
               accessibilityLabel="Go back"
             >
-              <Ionicons name="chevron-back" size={24} color="white" />
+              <Ionicons name="chevron-back" size={24} color={iconColor} />
             </TouchableOpacity>
             <ThemedText style={styles.screenTitle}>Report an Issue</ThemedText>
           </View>
@@ -274,24 +279,16 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E0E0E0",
   },
   backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "rgba(154, 154, 154, 0.3)",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 8,
+    flexDirection: "row",
   },
   backButtonText: {
     color: "#007AFF",
     fontSize: 16,
   },
   screenTitle: {
-    flex: 1,
     textAlign: "center",
-    fontSize: 22,
+    fontSize: 17,
     fontWeight: "600",
-    marginRight: 40, // To center the title
   },
   instructionContainer: {
     padding: 16,

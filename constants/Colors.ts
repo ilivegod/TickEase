@@ -37,6 +37,8 @@ export const gray400 = "#9ca3af"
 export const neutral900 = "#171717"
 export const neutral950 = "#0a0a0a"
 export const neutral800 = "#262626"
+export const neutral700 = "#404040"
+
 
 
 

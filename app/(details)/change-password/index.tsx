@@ -13,8 +13,14 @@ import {
   Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { ThemedView } from "../../../components/ThemedView";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useThemeColor } from "../../../hooks/useThemeColor";
+import { ThemedText } from "../../../components/ThemedText";
+import { neutral800, neutral900 } from "../../../constants/Colors";
 
-const ChangePasswordScreen = ({ navigation }) => {
+const ChangePasswordScreen = () => {
   // State for form fields
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -27,6 +33,13 @@ const ChangePasswordScreen = ({ navigation }) => {
   // Password strength indicators
   const [passwordStrength, setPasswordStrength] = useState("");
   const [passwordColor, setPasswordColor] = useState("#8E8E93");
+
+  const insets = useSafeAreaInsets();
+
+  const iconColor = useThemeColor(
+    { light: "black", dark: "white" },
+    "background"
+  );
 
   // Function to check password strength
   const checkPasswordStrength = (password) => {
@@ -113,7 +126,7 @@ const ChangePasswordScreen = ({ navigation }) => {
       Alert.alert(
         "Password Updated",
         "Your password has been successfully changed.",
-        [{ text: "OK", onPress: () => navigation.goBack() }]
+        [{ text: "OK", onPress: () => router.back() }]
       );
     }, 1500);
   };
@@ -127,7 +140,11 @@ const ChangePasswordScreen = ({ navigation }) => {
     setShowPassword,
     isLast = false,
   }) => (
-    <View style={styles.inputContainer}>
+    <ThemedView
+      lightColor="white"
+      darkColor={neutral800}
+      style={styles.inputContainer}
+    >
       <TextInput
         style={styles.input}
         placeholder={placeholder}
@@ -147,11 +164,11 @@ const ChangePasswordScreen = ({ navigation }) => {
           color="#8E8E93"
         />
       </TouchableOpacity>
-    </View>
+    </ThemedView>
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardAvoidingView}
@@ -159,18 +176,18 @@ const ChangePasswordScreen = ({ navigation }) => {
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => navigation.goBack()}
+            onPress={() => router.back()}
           >
-            <Ionicons name="chevron-back" size={24} color="#007AFF" />
-            <Text style={styles.backButtonText}>Settings</Text>
+            <Ionicons name="chevron-back" size={24} color={iconColor} />
           </TouchableOpacity>
-          <Text style={styles.screenTitle}>Change Password</Text>
-          <View style={styles.placeholder} />
+          <ThemedText style={styles.screenTitle}>Change Password</ThemedText>
         </View>
 
         <ScrollView style={styles.content}>
           <View style={styles.formContainer}>
-            <Text style={styles.sectionTitle}>Current Password</Text>
+            <ThemedText style={styles.sectionTitle}>
+              Current Password
+            </ThemedText>
             <PasswordInput
               placeholder="Enter your current password"
               value={currentPassword}
@@ -179,7 +196,7 @@ const ChangePasswordScreen = ({ navigation }) => {
               setShowPassword={setShowCurrentPassword}
             />
 
-            <Text style={styles.sectionTitle}>New Password</Text>
+            <ThemedText style={styles.sectionTitle}>New Password</ThemedText>
             <PasswordInput
               placeholder="Enter your new password"
               value={newPassword}
@@ -197,25 +214,34 @@ const ChangePasswordScreen = ({ navigation }) => {
               </View>
             ) : null}
 
-            <View style={styles.passwordRequirements}>
-              <Text style={styles.passwordRequirementsTitle}>
+            <ThemedView
+              lightColor="white"
+              darkColor={neutral800}
+              style={styles.passwordRequirements}
+            >
+              <ThemedText
+                lightColor="#666666"
+                style={styles.passwordRequirementsTitle}
+              >
                 Password requirements:
-              </Text>
-              <Text style={styles.requirementText}>
+              </ThemedText>
+              <ThemedText lightColor="#666666" style={styles.requirementText}>
                 • At least 8 characters long
-              </Text>
-              <Text style={styles.requirementText}>
+              </ThemedText>
+              <ThemedText lightColor="#666666" style={styles.requirementText}>
                 • Contains uppercase & lowercase letters
-              </Text>
-              <Text style={styles.requirementText}>
+              </ThemedText>
+              <ThemedText lightColor="#666666" style={styles.requirementText}>
                 • Contains at least one number
-              </Text>
-              <Text style={styles.requirementText}>
+              </ThemedText>
+              <ThemedText lightColor="#666666" style={styles.requirementText}>
                 • Contains at least one special character
-              </Text>
-            </View>
+              </ThemedText>
+            </ThemedView>
 
-            <Text style={styles.sectionTitle}>Confirm Password</Text>
+            <ThemedText style={styles.sectionTitle}>
+              Confirm Password
+            </ThemedText>
             <PasswordInput
               placeholder="Confirm your new password"
               value={confirmPassword}
@@ -262,27 +288,24 @@ const ChangePasswordScreen = ({ navigation }) => {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </ThemedView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F2F2F7",
   },
   keyboardAvoidingView: {
     flex: 1,
   },
   header: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#E0E0E0",
-    backgroundColor: "#FFFFFF",
   },
   backButton: {
     flexDirection: "row",
@@ -295,10 +318,10 @@ const styles = StyleSheet.create({
   screenTitle: {
     fontSize: 17,
     fontWeight: "600",
+
+    flex: 1,
   },
-  placeholder: {
-    width: 60, // To balance the header
-  },
+
   content: {
     flex: 1,
   },
@@ -308,17 +331,14 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#000000",
     marginTop: 16,
     marginBottom: 8,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
+
     borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
     marginBottom: 12,
   },
   input: {
@@ -345,7 +365,6 @@ const styles = StyleSheet.create({
     marginLeft: 6,
   },
   passwordRequirements: {
-    backgroundColor: "#F5F5F5",
     padding: 12,
     borderRadius: 8,
     marginBottom: 16,
@@ -354,11 +373,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     marginBottom: 6,
-    color: "#666666",
   },
   requirementText: {
     fontSize: 13,
-    color: "#666666",
+
     lineHeight: 20,
   },
   errorText: {
