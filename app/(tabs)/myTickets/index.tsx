@@ -17,7 +17,12 @@ import { useThemeColor } from "../../../hooks/useThemeColor";
 import { ThemedView } from "../../../components/ThemedView";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
-import { gray100, gray200, gray400 } from "../../../constants/Colors";
+import {
+  gray100,
+  gray200,
+  gray400,
+  neutral800,
+} from "../../../constants/Colors";
 import { ThemedText } from "../../../components/ThemedText";
 
 // Sample ticket data
@@ -84,6 +89,11 @@ const TicketScreen = () => {
     "background"
   );
 
+  const ticketBorderColor = useThemeColor(
+    { light: gray200, dark: gray400 },
+    "background"
+  );
+
   // Format date to be more readable
   const formatDate = (dateString: any) => {
     const options = {
@@ -113,37 +123,51 @@ const TicketScreen = () => {
 
   // Render individual ticket item
   const renderTicketItem = ({ item }) => (
-    <ThemedView style={styles.ticketItem}>
-      <View style={styles.ticketHeader}>
-        <ThemedText style={styles.eventName}>{item.eventName}</ThemedText>
-        <View
-          style={[
-            styles.statusBadge,
-            { backgroundColor: getStatusColor(item.status) },
-          ]}
-        >
-          <Text style={styles.statusText}>{item.status.toUpperCase()}</Text>
-        </View>
-      </View>
-
-      <ThemedText type="desc" style={styles.dateText}>
-        {formatDate(item.date)}
-      </ThemedText>
-
+    <ThemedView
+      lightColor="white"
+      darkColor={neutral800}
+      style={[
+        styles.ticketItem,
+        {
+          borderWidth: 2,
+          borderColor: ticketBorderColor,
+        },
+      ]}
+    >
       <TouchableOpacity
-        style={[styles.qrButton]}
         onPress={() => router.push(`(details)/singleTicket/${item.id}`)}
       >
-        <Text
-          style={[
-            styles.qrButtonText,
-            {
-              color: buttonColor,
-            },
-          ]}
+        <View style={styles.ticketHeader}>
+          <ThemedText style={styles.eventName}>{item.eventName}</ThemedText>
+          <View
+            style={[
+              styles.statusBadge,
+              { backgroundColor: getStatusColor(item.status) },
+            ]}
+          >
+            <Text style={styles.statusText}>{item.status.toUpperCase()}</Text>
+          </View>
+        </View>
+
+        <ThemedText type="desc" style={styles.dateText}>
+          {formatDate(item.date)}
+        </ThemedText>
+
+        <TouchableOpacity
+          style={[styles.qrButton]}
+          onPress={() => router.push(`(details)/singleTicket/${item.id}`)}
         >
-          Show Ticket
-        </Text>
+          <Text
+            style={[
+              styles.qrButtonText,
+              {
+                color: buttonColor,
+              },
+            ]}
+          >
+            Show Ticket
+          </Text>
+        </TouchableOpacity>
       </TouchableOpacity>
     </ThemedView>
   );
@@ -277,8 +301,6 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     elevation: 2,
-    borderWidth: 1,
-    borderColor: gray400,
   },
   ticketHeader: {
     flexDirection: "row",
