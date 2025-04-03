@@ -56,7 +56,10 @@ const promotionOpacity = new Animated.Value(1);
 
 // card component for featured and recommended events
 const renderEventCard = ({ item }) => (
-  <TouchableOpacity style={styles.eventCard}>
+  <TouchableOpacity
+    style={styles.eventCard}
+    onPress={() => router.push("(details)/events/id")}
+  >
     <Image source={{ uri: item.image }} style={styles.eventImage} />
     <View style={styles.eventDetails}>
       <ThemedText style={styles.eventTitle}>{item.title}</ThemedText>
@@ -76,6 +79,7 @@ const renderEventCard = ({ item }) => (
 // component function for quick access buttons
 const renderQuickAccessItem = ({ item }) => (
   <TouchableOpacity
+    onPress={() => router.push(`(details)/${item.route}`)}
     style={[styles.quickAccessItem, { backgroundColor: `${item.color}20` }]}
   >
     <View style={[styles.quickAccessIcon, { backgroundColor: item.color }]}>
@@ -91,11 +95,6 @@ export default function EventsScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const [data, setData] = useState(events);
-
-  const headerBgColor = useThemeColor(
-    { light: gray100, dark: neutral950 },
-    "background"
-  );
 
   const pillsSelectedBgColor = useThemeColor(
     { light: neutral950, dark: "white" },
@@ -245,7 +244,11 @@ export default function EventsScreen() {
           <Text style={styles.sectionTitle}>Public Transport</Text>
           <View style={styles.transportGrid}>
             {transportOptions.map((item) => (
-              <TouchableOpacity key={item.id} style={styles.transportCard}>
+              <TouchableOpacity
+                key={item.id}
+                style={styles.transportCard}
+                onPress={() => router.push("(details)/transport-ticket/id")}
+              >
                 <Image
                   source={{ uri: item.image }}
                   style={styles.transportImage}

@@ -1,73 +1,72 @@
 // Mock data for events
 const events = [
-    {
-      id: "1",
-      title: "Summer Music Festival",
-      date: "15",
-      month: "Aug",
-      location: "Accra",
-      subLocation: "Garage night club",
-      organizer: "Rock Waves Production",
-      category: "Music",
-    },
-    {
-      id: "2",
-      title: "Tech Conference 2024",
-      date: "20",
-      month: "Sept",
-      location: "Accra",
-      subLocation: "Garage night club",
-      organizer: "Viewer Arts Group",
-  
-      category: "Technology",
-    },
-    {
-      id: "3",
-      title: "Food & Wine Festival",
-      date: "5",
-      month: "Oct",
-      location: "Accra",
-      subLocation: "Garage night club",
-      organizer: "BET",
-      category: "Food",
-      image: "https://your-image-url.com/3",
-    },
-    {
-      id: "4",
-      title: "Summer Music Festival",
-      date: "15",
-      month: "Aug",
-      location: "Accra",
-      subLocation: "Garage night club",
-      organizer: "Rock Waves Production",
-  
-      category: "Music",
-    },
-    {
-      id: "5",
-      title: "Tech Conference 2024",
-      date: "20",
-      month: "Sept",
-      location: "Accra",
-      subLocation: "Garage night club",
-      organizer: "Viewer Arts Group",
-      category: "Technology",
-    },
-    {
-      id: "6",
-      title: "Food & Wine Festival",
-      date: "5",
-      month: "Oct",
-      location: "Accra",
-      subLocation: "Garage night club",
-      organizer: "BET",
-      category: "Food",
-      image: "https://your-image-url.com/3",
-    },
-  ];
+  {
+    id: "1",
+    title: "Summer Music Festival",
+    date: "15",
+    month: "Aug",
+    location: "Accra",
+    subLocation: "Garage night club",
+    organizer: "Rock Waves Production",
+    category: "Music",
+  },
+  {
+    id: "2",
+    title: "Tech Conference 2024",
+    date: "20",
+    month: "Sept",
+    location: "Accra",
+    subLocation: "Garage night club",
+    organizer: "Viewer Arts Group",
 
+    category: "Technology",
+  },
+  {
+    id: "3",
+    title: "Food & Wine Festival",
+    date: "5",
+    month: "Oct",
+    location: "Accra",
+    subLocation: "Garage night club",
+    organizer: "BET",
+    category: "Food",
+    image: "https://your-image-url.com/3",
+  },
+  {
+    id: "4",
+    title: "Summer Music Festival",
+    date: "15",
+    month: "Aug",
+    location: "Accra",
+    subLocation: "Garage night club",
+    organizer: "Rock Waves Production",
 
-  // Mock data for featured events
+    category: "Music",
+  },
+  {
+    id: "5",
+    title: "Tech Conference 2024",
+    date: "20",
+    month: "Sept",
+    location: "Accra",
+    subLocation: "Garage night club",
+    organizer: "Viewer Arts Group",
+    category: "Technology",
+  },
+  {
+    id: "6",
+    title: "Food & Wine Festival",
+    date: "5",
+    month: "Oct",
+    location: "Accra",
+    subLocation: "Garage night club",
+    organizer: "BET",
+    category: "Food",
+    image: "https://your-image-url.com/3",
+  },
+];
+
+// Mock data for featured events
 const featuredEvents = [
   {
     id: "1",
@@ -123,7 +122,6 @@ const transportOptions = [
   },
 ];
 
-
 // Mock data for recommended events based on user preferences
 const recommendedEvents = [
   {
@@ -143,7 +141,6 @@ const recommendedEvents = [
     image: "https://picsum.photos/id/1068/300/150",
   },
 ];
-
 
 // mock data for promotions
 const promotions = [
@@ -167,13 +164,43 @@ const promotions = [
   },
 ];
 
-
 // quick access mock data
 const quickAccess = [
-  { id: "4", title: "Event Tickets", icon: "calendar", color: "#9C27B0" },
-  { id: "1", title: "Transport Pass", icon: "bus", color: "#4CAF50" },
-  { id: "2", title: "Movie Tickets", icon: "film", color: "#FF9800" },
-  { id: "3", title: "Sport Tickets", icon: "football", color: "#2196F3" },
+  {
+    id: "4",
+    title: "Event Tickets",
+    icon: "calendar",
+    color: "#9C27B0",
+    route: "event-tickets",
+  },
+  {
+    id: "1",
+    title: "Transport Pass",
+    icon: "bus",
+    color: "#4CAF50",
+    route: "event-tickets",
+  },
+  {
+    id: "2",
+    title: "Movie Tickets",
+    icon: "film",
+    color: "#FF9800",
+    route: "event-tickets",
+  },
+  {
+    id: "3",
+    title: "Sport Tickets",
+    icon: "football",
+    color: "#2196F3",
+    route: "event-tickets",
+  },
 ];
 
-  export  {events, featuredEvents, transportOptions, recommendedEvents, promotions, quickAccess}
+export {
+  events,
+  featuredEvents,
+  transportOptions,
+  recommendedEvents,
+  promotions,
+  quickAccess,
+};

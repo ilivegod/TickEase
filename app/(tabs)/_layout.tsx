@@ -1,4 +1,5 @@
 import { Tabs } from "expo-router";
+
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 
 export default function TabsLayout() {
@@ -25,6 +26,15 @@ export default function TabsLayout() {
 
       <Tabs.Screen
         name="settings/index"
+        options={{
+          title: "Settings",
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="settings" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="topRouting/index"
         options={{
           title: "Settings",
           tabBarIcon: ({ color }) => (
